@@ -1,10 +1,10 @@
 import React from 'react';
-import { Header } from './layout/Header';
-import { Hero } from './sections/Hero';
-import { Features } from './sections/Features';
-import { Testimonials } from './sections/Testimonials';
-import { CtaSection } from './sections/CtaSection';
-import { Footer } from './layout/Footer';
+import { Header } from '../components/layout/Header';
+import { Hero } from '../components/sections/Hero';
+import { Features } from '../components/sections/Features';
+import { Testimonials } from '../components/sections/Testimonials';
+import { CtaSection } from '../components/sections/CtaSection';
+import { Footer } from '../components/layout/Footer';
 
 export const LandingPage: React.FC = () => {
   return (
