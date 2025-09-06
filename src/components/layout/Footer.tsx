@@ -3,7 +3,7 @@ import { Logo } from '../common/Logo';
 import { NavItem } from '../common/NavItem';
 
 export const Footer: React.FC = () => (
-  <footer className="bg-gray-50 py-12 border-t border-gray-100">
+  <footer className="bg-gray-50 py-12 border-t border-gray-100 ">
     <div className="container mx-auto px-4">
       <div className="flex flex-col md:flex-row justify-between items-center">
         <div className="flex items-center space-x-2 mb-6 md:mb-0">

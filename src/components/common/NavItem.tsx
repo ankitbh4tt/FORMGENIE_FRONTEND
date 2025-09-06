@@ -3,6 +3,8 @@ import React from 'react';
 interface NavItemProps {
   href: string;
   children: React.ReactNode;
+  className?: string;  // Add this line
+  onClick?: () => void;
 }
 
 export const NavItem: React.FC<NavItemProps> = ({ href, children }) => (
