@@ -1,11 +1,12 @@
 import React from 'react';
 import { Button } from '../common/Button';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 export const Hero: React.FC = () => {
+    const navigate = useNavigate();
   const handleClick = () => {
-    const token = localStorage.getItem('clerkToken');
-    window.location.href = token ? '/ai-chat' : '/login';
+    navigate('/dashboard');
   };
 
   return (
