@@ -2,8 +2,9 @@ import { createBrowserRouter } from "react-router-dom";
 import App from "./App";
 import { LandingPage } from "./pages/LandingPage";
 import DashboardPage from "./components/Dashboard";
+import FormView from "./components/FormView";
 import ProtectedRoutes from "./components/common/ProtectedRoutes";
-import {FormBuilder} from "./pages/FormBuilder";
+import FormBuilder from "./components/FormBuilder/FormBuilder";
 
 const router = createBrowserRouter([
   {
@@ -28,6 +29,26 @@ const router = createBrowserRouter([
             <FormBuilder />
           </ProtectedRoutes>
         ),
+      },
+      {
+        path: "/builder",
+        element: (
+          <ProtectedRoutes>
+            <FormBuilder />
+          </ProtectedRoutes>
+        ),
+      },
+      {
+        path: "/builder/:sessionId",
+        element: (
+          <ProtectedRoutes>
+            <FormBuilder />
+          </ProtectedRoutes>
+        ),
+      },
+      {
+        path: "/form/:formId",
+        element: <FormView />,
       },
     ],
   },
