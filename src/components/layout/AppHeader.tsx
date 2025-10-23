@@ -1,24 +1,30 @@
 import React, { useState } from "react";
 import { Logo } from "../common/Logo";
 import { UserButton } from "@clerk/clerk-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
-// Simple NavLink for consistency
+// Enhanced NavLink with active state detection
 const NavLink = ({
   href,
   children,
   onClick,
   className,
+  isActive,
 }: {
   href: string;
   children: React.ReactNode;
   onClick?: () => void;
   className?: string;
+  isActive?: boolean;
 }) => (
   <a
     href={href}
     onClick={onClick}
-    className={`text-gray-700 hover:text-purple-600 transition-colors ${className}`}
+    className={`transition-colors ${
+      isActive
+        ? "text-purple-600 font-semibold"
+        : "text-gray-700 hover:text-purple-600"
+    } ${className}`}
   >
     {children}
   </a>
@@ -27,8 +33,17 @@ const NavLink = ({
 export const AppHeader: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
+
+  // Helper function to check if a path is active
+  const isActivePath = (path: string) => {
+    if (path === "/dashboard") {
+      return location.pathname === "/dashboard";
+    }
+    return location.pathname.startsWith(path);
+  };
 
   return (
     <header className="fixed top-0 left-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-white/10">
@@ -46,13 +61,19 @@ export const AppHeader: React.FC = () => {
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center space-x-6">
-          <NavLink href="/dashboard">Dashboard</NavLink>
-          <NavLink href="/forms">My Forms</NavLink>
-          <NavLink href="/responses">Responses</NavLink>
+          <NavLink href="/dashboard" isActive={isActivePath("/dashboard")}>
+            Dashboard
+          </NavLink>
+          <NavLink href="/forms" isActive={isActivePath("/forms")}>
+            My Forms
+          </NavLink>
+          <NavLink href="/responses" isActive={isActivePath("/responses")}>
+            Responses
+          </NavLink>
 
           {/* CTA Button */}
           <button
-            onClick={() => navigate("/forms/new")}
+            onClick={() => navigate("/builder")}
             className="px-5 py-2 rounded-full bg-gradient-to-r from-fuchsia-500 to-purple-600 text-white font-medium shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
           >
             + New Form
@@ -79,6 +100,7 @@ export const AppHeader: React.FC = () => {
             <NavLink
               href="/dashboard"
               className="px-4 py-2 font-medium text-gray-800 hover:bg-gray-100"
+              isActive={isActivePath("/dashboard")}
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Dashboard
@@ -86,6 +108,7 @@ export const AppHeader: React.FC = () => {
             <NavLink
               href="/forms"
               className="px-4 py-2 font-medium text-gray-800 hover:bg-gray-100"
+              isActive={isActivePath("/forms")}
               onClick={() => setIsMobileMenuOpen(false)}
             >
               My Forms
@@ -93,6 +116,7 @@ export const AppHeader: React.FC = () => {
             <NavLink
               href="/responses"
               className="px-4 py-2 font-medium text-gray-800 hover:bg-gray-100"
+              isActive={isActivePath("/responses")}
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Responses
@@ -100,7 +124,7 @@ export const AppHeader: React.FC = () => {
             <hr className="my-1 border-gray-100" />
             <button
               onClick={() => {
-                navigate("/forms/new");
+                navigate("/builder");
                 setIsMobileMenuOpen(false);
               }}
               className="block w-full text-left font-medium px-4 py-2 text-purple-600 hover:bg-gray-100 transition-colors"
