@@ -2,6 +2,9 @@ import { createBrowserRouter } from "react-router-dom";
 import App from "./App";
 import { LandingPage } from "./pages/LandingPage";
 import DashboardPage from "./components/Dashboard";
+import FormsPage from "./components/Forms";
+import FormSelector from "./components/FormSelector";
+import FormResponses from "./components/FormResponses";
 import FormView from "./components/FormView";
 import ProtectedRoutes from "./components/common/ProtectedRoutes";
 import FormBuilder from "./components/FormBuilder/FormBuilder";
@@ -19,6 +22,30 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoutes>
             <DashboardPage />
+          </ProtectedRoutes>
+        ),
+      },
+      {
+        path: "/forms",
+        element: (
+          <ProtectedRoutes>
+            <FormsPage />
+          </ProtectedRoutes>
+        ),
+      },
+      {
+        path: "/responses",
+        element: (
+          <ProtectedRoutes>
+            <FormSelector />
+          </ProtectedRoutes>
+        ),
+      },
+      {
+        path: "/responses/:formId",
+        element: (
+          <ProtectedRoutes>
+            <FormResponses />
           </ProtectedRoutes>
         ),
       },

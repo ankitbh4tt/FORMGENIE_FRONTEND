@@ -82,5 +82,11 @@ export const useApi = () => {
       apiCall(`/api/v1/responses/responses/${formId}`),
     getSessionSchema: (sessionId: string) =>
       apiCall(`/api/v1/ai/session/${sessionId}`),
+
+    // Dashboard API
+    getDashboardStats: () => apiCall("/api/v1/dashboard/stats"),
+
+    // Responses API
+    getAllResponses: () => apiCall("/api/v1/responses/all"),
   };
 };
