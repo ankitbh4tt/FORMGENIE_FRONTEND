@@ -1,5 +1,16 @@
-const FormPreview = ({ schema }) => {
-  const renderField = (field, index) => {
+interface FormField {
+  label: string;
+  type: string;
+  required?: boolean;
+  options?: string[];
+}
+
+interface FormPreviewProps {
+  schema: FormField[];
+}
+
+const FormPreview = ({ schema }: FormPreviewProps) => {
+  const renderField = (field: FormField, index: number) => {
     const fieldId = `field-${index}`;
 
     switch (field.type) {
@@ -34,7 +45,7 @@ const FormPreview = ({ schema }) => {
             className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl text-sm transition-all duration-200 bg-white focus:outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-100"
           >
             <option value="">Choose an option</option>
-            {field.options?.map((option, optIndex) => (
+            {field.options?.map((option: string, optIndex: number) => (
               <option key={optIndex} value={option}>
                 {option}
               </option>
@@ -86,7 +97,7 @@ const FormPreview = ({ schema }) => {
           <textarea
             key={index}
             id={fieldId}
-            rows="4"
+            rows={4}
             className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl text-sm resize-vertical transition-all duration-200 focus:outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-100"
             placeholder={`Enter ${field.label.toLowerCase()}`}
           />
@@ -97,7 +108,7 @@ const FormPreview = ({ schema }) => {
   return (
     <div className="space-y-6">
       <div className="space-y-4">
-        {schema.map((field, index) => (
+        {schema.map((field: FormField, index: number) => (
           <div
             key={index}
             className="flex flex-col gap-2 animate-in fade-in duration-300"

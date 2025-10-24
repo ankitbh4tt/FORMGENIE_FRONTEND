@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from 'react';
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ChatPanel from "./ChatPanel";
@@ -8,7 +9,22 @@ import LoadingOverlay from "../ui/LoadingOverlay";
 import { useApi } from "../../../services/api";
 import toast from "react-hot-toast";
 
-const FormBuilder = () => {
+interface Message {
+  id: number | string;
+  type: string;
+  content: string;
+  timestamp: Date;
+  isError?: boolean;
+}
+
+interface FormField {
+  label: string;
+  type: string;
+  required?: boolean;
+  options?: string[];
+}
+
+const FormBuilder = (): React.ReactElement => {
   const { sessionId } = useParams();
   const navigate = useNavigate();
   const {
@@ -18,7 +34,7 @@ const FormBuilder = () => {
     getSessionSchema,
   } = useApi();
 
-  const [messages, setMessages] = useState([
+  const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
       type: "assistant",
@@ -28,8 +44,8 @@ const FormBuilder = () => {
     },
   ]);
 
-  const [currentSessionId, setCurrentSessionId] = useState(sessionId || null);
-  const [formSchema, setFormSchema] = useState([]);
+  const [currentSessionId, setCurrentSessionId] = useState<string | null | undefined>(sessionId || null);
+  const [formSchema, setFormSchema] = useState<FormField[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("");
   const [inputValue, setInputValue] = useState("");
@@ -69,7 +85,7 @@ const FormBuilder = () => {
     }
   }, [sessionId, formSchema.length, isLoading, navigate, getSessionSchema]);
 
-  const handleSendMessage = async (message) => {
+  const handleSendMessage = async (message: string) => {
     if (!message.trim() || isLoading) return;
 
     // Add user message
@@ -166,6 +182,10 @@ const FormBuilder = () => {
           formSchema={formSchema}
           sessionId={currentSessionId}
           onNavigate={navigate}
+          onSchemaUpdate={(schema, sessionId) => {
+            setFormSchema(schema);
+            setCurrentSessionId(sessionId);
+          }}
         />
       </div>
 

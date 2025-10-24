@@ -5,13 +5,28 @@ import LoadingButton from "../ui/LoadingButton";
 import { useApi } from "../../../services/api";
 import { toast } from "react-hot-toast"; // For UX feedback
 
+interface FormField {
+  label: string;
+  type: string;
+  required?: boolean;
+  options?: string[];
+}
+
+interface FormActionsProps {
+  sessionId: string | null | undefined;
+  formSchema: FormField[];
+  onNavigate: (url: string) => void;
+  formId?: string | null;
+  onSchemaUpdate: (schema: FormField[], sessionId: string) => void;
+}
+
 const FormActions = ({
   sessionId,
   formSchema,
   onNavigate,
   formId,
   onSchemaUpdate,
-}) => {
+}: FormActionsProps) => {
   // Added onSchemaUpdate for refinement callback
   const [isPublishing, setIsPublishing] = useState(false);
   const [isAmending, setIsAmending] = useState(false);
@@ -70,7 +85,7 @@ const FormActions = ({
   const amendSavedForm = async () => {
     setIsAmending(true);
     try {
-      const response = await amendForm(formId);
+      const response = await amendForm(formId || "");
       if (response.success) {
         toast.success("Amendment session started!");
         // Update UI with new session/schema
@@ -90,7 +105,7 @@ const FormActions = ({
 
     setIsAmending(true);
     try {
-      const response = await refineSessionSchema(refinementPrompt, sessionId);
+      const response = await refineSessionSchema(refinementPrompt, sessionId || "");
       if (response.success) {
         toast.success("Form refined successfully!");
         setShowAmendModal(false);
@@ -179,7 +194,7 @@ const FormActions = ({
                   onChange={(e) => setRefinementPrompt(e.target.value)}
                   placeholder="e.g., 'Make the email field required and add a phone number field'"
                   className="px-4 py-3 border-2 border-slate-200 rounded-xl text-sm resize-vertical min-h-[100px] transition-all duration-200 font-inherit focus:outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-100"
-                  rows="3"
+                  rows={3}
                 />
               </div>
             </div>

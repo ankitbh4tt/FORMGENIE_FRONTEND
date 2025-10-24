@@ -4,7 +4,21 @@ import { useState } from "react";
 import FormPreview from "./FormPreview";
 import FormActions from "./FormActions";
 
-const PreviewPanel = ({ formSchema, sessionId, onNavigate }) => {
+interface FormField {
+  label: string;
+  type: string;
+  required?: boolean;
+  options?: string[];
+}
+
+interface PreviewPanelProps {
+  formSchema: FormField[];
+  sessionId: string | null | undefined;
+  onNavigate: (url: string) => void;
+  onSchemaUpdate: (schema: FormField[], sessionId: string) => void;
+}
+
+const PreviewPanel = ({ formSchema, sessionId, onNavigate, onSchemaUpdate }: PreviewPanelProps) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (
@@ -45,6 +59,7 @@ const PreviewPanel = ({ formSchema, sessionId, onNavigate }) => {
               sessionId={sessionId}
               formSchema={formSchema}
               onNavigate={onNavigate}
+              onSchemaUpdate={onSchemaUpdate}
             />
           </>
         ) : (

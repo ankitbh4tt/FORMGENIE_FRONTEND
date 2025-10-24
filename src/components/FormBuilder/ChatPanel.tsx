@@ -4,15 +4,31 @@ import { useRef, useEffect } from "react";
 import MessageBubble from "./MessageBubble";
 import TypingIndicator from "../ui/TypingIndicator";
 
+interface Message {
+  id: number | string;
+  type: string;
+  content: string;
+  timestamp: Date;
+  isError?: boolean;
+}
+
+interface ChatPanelProps {
+  messages: Message[];
+  onSendMessage: (msg: string) => void;
+  isLoading: boolean;
+  inputValue: string;
+  setInputValue: (val: string) => void;
+}
+
 const ChatPanel = ({
   messages,
   onSendMessage,
   isLoading,
   inputValue,
   setInputValue,
-}) => {
-  const messagesEndRef = useRef(null);
-  const inputRef = useRef(null);
+}: ChatPanelProps) => {
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLTextAreaElement | null>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -22,17 +38,19 @@ const ChatPanel = ({
     scrollToBottom();
   }, [messages, isLoading]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (inputValue.trim() && !isLoading) {
       onSendMessage(inputValue);
     }
   };
 
-  const handleKeyPress = (e) => {
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      handleSubmit(e);
+      if (inputValue.trim() && !isLoading) {
+        onSendMessage(inputValue);
+      }
     }
   };
 
@@ -60,7 +78,7 @@ const ChatPanel = ({
       </div>
 
       <div className="flex-1 p-6 overflow-y-auto flex flex-col gap-4 min-h-0">
-        {messages.map((message) => (
+        {messages.map((message: Message) => (
           <MessageBubble key={message.id} message={message} />
         ))}
 
@@ -81,7 +99,7 @@ const ChatPanel = ({
             onKeyPress={handleKeyPress}
             placeholder="Describe the form you want to create..."
             className="flex-1 p-4 border-2 border-slate-200 rounded-2xl text-sm resize-none transition-all duration-200 font-inherit min-h-[48px] max-h-[120px] focus:outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-100 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed"
-            rows="1"
+            rows={1}
             disabled={isLoading}
           />
           <button
@@ -95,7 +113,7 @@ const ChatPanel = ({
           </button>
         </div>
 
-        {!messages.some((m) => m.type === "user") && (
+        {!messages.some((m: Message) => m.type === "user") && (
           <div className="mt-2">
             <div className="flex gap-2 flex-wrap">
               <button

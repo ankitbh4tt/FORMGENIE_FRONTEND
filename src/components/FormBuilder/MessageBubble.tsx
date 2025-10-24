@@ -1,4 +1,16 @@
-const MessageBubble = ({ message }) => {
+interface Message {
+  id: number | string;
+  type: string;
+  content: string;
+  timestamp: Date;
+  isError?: boolean;
+}
+
+interface MessageBubbleProps {
+  message: Message;
+}
+
+const MessageBubble = ({ message }: MessageBubbleProps) => {
   if (message.type === "divider") {
     return (
       <div className="flex items-center my-6 gap-4 animate-in fade-in duration-300">

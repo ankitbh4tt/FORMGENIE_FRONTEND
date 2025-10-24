@@ -1,39 +1,53 @@
 "use client";
 
+import * as React from 'react';
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 // import { getPublicForm, submitFormResponse } from "../../services/api";
 import { useApi } from "../../services/api";
 import LoadingButton from "./ui/LoadingButton";
 
-const FormView = () => {
+interface FormField {
+  label: string;
+  type: string;
+  required?: boolean;
+  options?: string[];
+}
+
+interface FormType {
+  title: string;
+  description?: string;
+  schema: FormField[];
+}
+
+const FormView = (): React.ReactElement => {
   const { formId } = useParams();
   const { getPublicForm, submitFormResponse } = useApi();
-  const [form, setForm] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const [error, setError] = useState(null);
-  const [formData, setFormData] = useState({});
+  const [form, setForm] = useState<FormType | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [submitting, setSubmitting] = useState<boolean>(false);
+  const [submitted, setSubmitted] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [formData, setFormData] = useState<Record<string, any>>({});
 
   useEffect(() => {
     loadForm();
   }, [formId]);
 
-  const loadForm = async () => {
+  const loadForm = async (): Promise<void> => {
     try {
       setLoading(true);
-      const response = await getPublicForm(formId);
+      const response = await getPublicForm(formId || "");
       if (response.success) {
         setForm(response.form);
         // Initialize form data
-        const initialData = {};
-        response.form.schema.forEach((field) => {
+        const initialData: Record<string, any> = {};
+        response.form.schema.forEach((field: FormField) => {
           initialData[field.label] = field.type === "checkbox" ? false : "";
         });
         setFormData(initialData);
       } else {
-        setError(response.error);
+        setError(response.error || null);
       }
     } catch (err) {
       setError("Failed to load form");
@@ -43,17 +57,18 @@ const FormView = () => {
     }
   };
 
-  const handleInputChange = (fieldLabel, value) => {
+  const handleInputChange = (fieldLabel: string, value: any): void => {
     setFormData((prev) => ({
       ...prev,
       [fieldLabel]: value,
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
 
     // Validate required fields
+    if (!form) return;
     const missingFields = form.schema
       .filter((field) => field.required && !formData[field.label])
       .map((field) => field.label);
@@ -65,14 +80,14 @@ const FormView = () => {
 
     try {
       setSubmitting(true);
-
+      if (!form) return;
       // Convert form data to API format
-      const responses = form.schema.map((field) => ({
+      const responses = form.schema.map((field: FormField) => ({
         label: field.label,
         value: formData[field.label],
       }));
 
-      const response = await submitFormResponse(formId, responses);
+      const response = await submitFormResponse(formId || "", responses);
 
       if (response.success) {
         setSubmitted(true);
@@ -87,7 +102,7 @@ const FormView = () => {
     }
   };
 
-  const renderField = (field, index) => {
+  const renderField = (field: FormField, index: number): React.ReactElement => {
     const fieldId = `field-${index}`;
     const value = formData[field.label] || "";
 
@@ -132,7 +147,7 @@ const FormView = () => {
             required={field.required}
           >
             <option value="">Choose an option</option>
-            {field.options?.map((option, optIndex) => (
+            {field.options?.map((option: string, optIndex: number) => (
               <option key={optIndex} value={option}>
                 {option}
               </option>
@@ -168,9 +183,10 @@ const FormView = () => {
             <input
               id={fieldId}
               type="file"
-              onChange={(e) =>
-                handleInputChange(field.label, e.target.files[0]?.name || "")
-              }
+              onChange={(e) => {
+                const files = e.target.files;
+                handleInputChange(field.label, files && files[0] ? files[0].name : "");
+              }}
               className="absolute opacity-0 w-full h-full cursor-pointer"
               required={field.required}
             />
@@ -193,7 +209,7 @@ const FormView = () => {
           <textarea
             key={index}
             id={fieldId}
-            rows="4"
+            rows={4}
             value={value}
             onChange={(e) => handleInputChange(field.label, e.target.value)}
             className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl text-sm resize-vertical transition-all duration-200 focus:outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-100"
@@ -246,9 +262,9 @@ const FormView = () => {
       <div className="max-w-2xl mx-auto bg-white rounded-3xl shadow-2xl border border-purple-100 overflow-hidden">
         <div className="p-8 bg-gradient-to-r from-white to-slate-50 border-b border-slate-100 text-center">
           <h1 className="text-3xl font-bold text-slate-800 mb-2">
-            {form.title}
+            {form?.title}
           </h1>
-          {form.description && (
+          {form?.description && (
             <p className="text-slate-600 text-base leading-relaxed">
               {form.description}
             </p>
@@ -256,7 +272,7 @@ const FormView = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="p-8 flex flex-col gap-6">
-          {form.schema.map((field, index) => (
+          {form?.schema.map((field: FormField, index: number) => (
             <div
               key={index}
               className="flex flex-col gap-2 animate-in fade-in duration-300"
@@ -282,6 +298,7 @@ const FormView = () => {
               type="submit"
               loading={submitting}
               className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white border-0 rounded-2xl text-base font-semibold cursor-pointer transition-all duration-200 shadow-lg shadow-purple-500/30 hover:transform hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-500/40 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              onClick={() => {}}
             >
               <span className="material-symbols-outlined">send</span>
               Submit Form

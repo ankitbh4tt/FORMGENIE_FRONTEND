@@ -1,5 +1,15 @@
 "use client";
 
+import { ReactNode, MouseEventHandler } from "react";
+
+interface LoadingButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  children: ReactNode;
+  loading?: boolean;
+  disabled?: boolean;
+  onClick: MouseEventHandler<HTMLButtonElement>;
+  className?: string;
+}
+
 const LoadingButton = ({
   children,
   loading = false,
@@ -7,7 +17,7 @@ const LoadingButton = ({
   onClick,
   className = "",
   ...props
-}) => {
+}: LoadingButtonProps) => {
   return (
     <button
       onClick={onClick}
