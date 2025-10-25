@@ -53,7 +53,10 @@ export const AppHeader: React.FC = () => {
           className="flex items-center space-x-2 cursor-pointer"
           onClick={() => navigate("/dashboard")}
         >
-          <Logo />
+          {/* <Logo /> */}
+          <div className="w-10 h-10">
+            <img src="./favicon.png" alt="FormGenie" />
+          </div>
           <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-600 to-purple-600">
             FormGenie
           </span>
