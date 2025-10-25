@@ -105,29 +105,33 @@ const Forms = () => {
             </p>
           </div>
 
-          <div className="flex gap-3">
-            <button
-              onClick={() => navigate("/dashboard")}
-              className="flex items-center gap-2 px-6 py-3 bg-white text-slate-700 border border-slate-200 rounded-2xl font-semibold cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md hover:transform hover:-translate-y-0.5"
-            >
-              <span className="material-symbols-outlined">dashboard</span>
-              Dashboard
-            </button>
-            <button
-              onClick={() => navigate("/responses")}
-              className="flex items-center gap-2 px-6 py-3 bg-white text-slate-700 border border-slate-200 rounded-2xl font-semibold cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md hover:transform hover:-translate-y-0.5"
-            >
-              <span className="material-symbols-outlined">assignment</span>
-              View All Responses
-            </button>
-            <button
-              onClick={() => navigate("/builder")}
-              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white border-0 rounded-2xl font-semibold cursor-pointer transition-all duration-200 shadow-lg shadow-purple-500/30 hover:transform hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-500/40"
-            >
-              <span className="material-symbols-outlined">add</span>
-              Create New Form
-            </button>
-          </div>
+          <div className="w-full flex flex-col gap-2 sm:flex-row sm:gap-3 sm:w-auto">
+  <div className="flex flex-row gap-2 sm:gap-3 w-full sm:w-auto">
+    <button
+      onClick={() => navigate("/dashboard")}
+      className="flex items-center gap-2 px-6 py-3 bg-white text-slate-700 border border-slate-200 rounded-2xl font-semibold cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md hover:transform hover:-translate-y-0.5 w-full sm:w-auto"
+    >
+      <span className="material-symbols-outlined">dashboard</span>
+      Dashboard
+    </button>
+    <button
+      onClick={() => navigate("/responses")}
+      className="flex items-center gap-2 px-6 py-3 bg-white text-slate-700 border border-slate-200 rounded-2xl font-semibold cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md hover:transform hover:-translate-y-0.5 w-full sm:w-auto"
+    >
+      <span className="material-symbols-outlined">assignment</span>
+      View All Responses
+    </button>
+  </div>
+  <div className="w-full sm:w-auto">
+    <button
+      onClick={() => navigate("/builder")}
+      className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white border-0 rounded-2xl font-semibold cursor-pointer transition-all duration-200 shadow-lg shadow-purple-500/30 hover:transform hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-500/40 w-full sm:w-auto"
+    >
+      <span className="material-symbols-outlined">add</span>
+      Create New Form
+    </button>
+  </div>
+</div>
         </div>
 
         {error && (
