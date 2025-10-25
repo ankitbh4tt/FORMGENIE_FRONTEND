@@ -154,7 +154,77 @@ const FormActions = ({
           className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
           onClick={() => setShowSaveModal(false)}
         >
-          {/* ... (unchanged save modal code) ... */}
+          <div
+            className="bg-white rounded-3xl shadow-2xl border border-purple-100 overflow-hidden max-w-md w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-6 border-b border-slate-100 bg-gradient-to-r from-white to-slate-50 flex justify-between items-center">
+              <h3 className="text-xl font-bold text-slate-800">
+                Save & Publish Form
+              </h3>
+              <button
+                onClick={() => setShowSaveModal(false)}
+                className="p-2 bg-transparent border-0 text-slate-400 cursor-pointer rounded-lg transition-all duration-200 hover:bg-slate-100 hover:text-slate-600"
+              >
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <div className="flex flex-col gap-2">
+                <label
+                  htmlFor="form-title"
+                  className="text-sm font-semibold text-gray-700"
+                >
+                  Form Title *
+                </label>
+                <input
+                  id="form-title"
+                  type="text"
+                  value={formTitle}
+                  onChange={(e) => setFormTitle(e.target.value)}
+                  placeholder="Enter form title"
+                  className="px-4 py-3 border-2 border-slate-200 rounded-xl text-sm transition-all duration-200 font-inherit focus:outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-100"
+                  autoFocus
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label
+                  htmlFor="form-description"
+                  className="text-sm font-semibold text-gray-700"
+                >
+                  Description (Optional)
+                </label>
+                <textarea
+                  id="form-description"
+                  value={formDescription}
+                  onChange={(e) => setFormDescription(e.target.value)}
+                  placeholder="Enter form description"
+                  className="px-4 py-3 border-2 border-slate-200 rounded-xl text-sm resize-vertical min-h-[100px] transition-all duration-200 font-inherit focus:outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-100"
+                  rows={3}
+                />
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-slate-100 flex gap-3">
+              <button
+                onClick={() => setShowSaveModal(false)}
+                className="px-6 py-3 border-2 border-slate-300 text-slate-600 bg-white rounded-2xl font-semibold cursor-pointer transition-all duration-200 hover:bg-slate-50"
+              >
+                Cancel
+              </button>
+              <LoadingButton
+                onClick={handleSaveForm}
+                disabled={!formTitle.trim()}
+                loading={isPublishing}
+                className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white border-0 rounded-2xl font-semibold cursor-pointer transition-all duration-200 shadow-lg shadow-purple-500/30 hover:transform hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-500/40 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
+              >
+                <span className="material-symbols-outlined">publish</span>
+                Publish Form
+              </LoadingButton>
+            </div>
+          </div>
         </div>
       )}
 

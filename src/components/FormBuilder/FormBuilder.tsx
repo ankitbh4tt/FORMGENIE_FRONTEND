@@ -5,7 +5,6 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ChatPanel from "./ChatPanel";
 import PreviewPanel from "./PreviewPanel";
-import LoadingOverlay from "../ui/LoadingOverlay";
 import { useApi } from "../../../services/api";
 import toast from "react-hot-toast";
 
@@ -47,13 +46,14 @@ const FormBuilder = (): React.ReactElement => {
   const [currentSessionId, setCurrentSessionId] = useState<string | null | undefined>(sessionId || null);
   const [formSchema, setFormSchema] = useState<FormField[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [loadingMessage, setLoadingMessage] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
   const [inputValue, setInputValue] = useState("");
+  const [activeView, setActiveView] = useState<'chat' | 'preview'>('chat');
 
   useEffect(() => {
     if (sessionId && !formSchema.length && !isLoading) {
       setIsLoading(true);
-      setLoadingMessage("Loading your form session...");
+      setIsGenerating(true);
       getSessionSchema(sessionId)
         .then((response) => {
           if (response.success) {
@@ -80,7 +80,7 @@ const FormBuilder = (): React.ReactElement => {
         })
         .finally(() => {
           setIsLoading(false);
-          setLoadingMessage("");
+          setIsGenerating(false);
         });
     }
   }, [sessionId, formSchema.length, isLoading, navigate, getSessionSchema]);
@@ -99,18 +99,16 @@ const FormBuilder = (): React.ReactElement => {
     setMessages((prev) => [...prev, userMessage]);
     setInputValue("");
     setIsLoading(true);
-    setLoadingMessage("AI is analyzing your request...");
+    setIsGenerating(true);
 
     try {
       let response;
 
       if (currentSessionId) {
         // Amend existing form
-        setLoadingMessage("Updating your form...");
         response = await amendFormSchema(message, currentSessionId);
       } else {
         // Generate new form
-        setLoadingMessage("Creating your form...");
         response = await generateFormSchema(message);
         setCurrentSessionId(response.sessionId);
 
@@ -163,33 +161,75 @@ const FormBuilder = (): React.ReactElement => {
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
-      setLoadingMessage("");
+      setIsGenerating(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4">
-      <div className="flex flex-col lg:flex-row max-w-7xl mx-auto gap-6 lg:gap-8 h-[calc(100vh-2rem)]">
-        <ChatPanel
-          messages={messages}
-          onSendMessage={handleSendMessage}
-          isLoading={isLoading}
-          inputValue={inputValue}
-          setInputValue={setInputValue}
-        />
-
-        <PreviewPanel
-          formSchema={formSchema}
-          sessionId={currentSessionId}
-          onNavigate={navigate}
-          onSchemaUpdate={(schema, sessionId) => {
-            setFormSchema(schema);
-            setCurrentSessionId(sessionId);
-          }}
-        />
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+      {/* Mobile View Toggle */}
+      <div className="lg:hidden sticky top-0 z-10 bg-white border-b border-slate-200 shadow-sm">
+        <div className="flex">
+          <button
+            onClick={() => setActiveView('chat')}
+            className={`flex-1 py-4 px-6 font-semibold text-sm transition-all duration-200 border-b-2 ${
+              activeView === 'chat'
+                ? 'border-purple-600 text-purple-600 bg-purple-50'
+                : 'border-transparent text-slate-600 hover:bg-slate-50'
+            }`}
+          >
+            <span className="material-symbols-outlined text-base mr-2 align-middle">chat</span>
+            Chat
+          </button>
+          <button
+            onClick={() => setActiveView('preview')}
+            className={`flex-1 py-4 px-6 font-semibold text-sm transition-all duration-200 border-b-2 relative ${
+              activeView === 'preview'
+                ? 'border-purple-600 text-purple-600 bg-purple-50'
+                : 'border-transparent text-slate-600 hover:bg-slate-50'
+            }`}
+          >
+            <span className="material-symbols-outlined text-base mr-2 align-middle">visibility</span>
+            Preview
+            {formSchema.length > 0 && (
+              <span className="absolute top-2 right-2 w-2 h-2 bg-green-500 rounded-full"></span>
+            )}
+          </button>
+        </div>
       </div>
 
-      {isLoading && <LoadingOverlay message={loadingMessage} />}
+      <div className="p-4">
+        <div className="flex flex-col lg:flex-row max-w-7xl mx-auto gap-6 lg:gap-8 h-[calc(100vh-2rem)] lg:h-[calc(100vh-2rem)]">
+          {/* Chat Panel */}
+          <div className={`${
+            activeView === 'chat' ? 'flex' : 'hidden'
+          } lg:flex flex-1 min-h-[calc(100vh-8rem)] lg:min-h-0`}>
+            <ChatPanel
+              messages={messages}
+              onSendMessage={handleSendMessage}
+              isLoading={isLoading}
+              inputValue={inputValue}
+              setInputValue={setInputValue}
+            />
+          </div>
+
+          {/* Preview Panel */}
+          <div className={`${
+            activeView === 'preview' ? 'flex' : 'hidden'
+          } lg:flex flex-1 min-h-[calc(100vh-8rem)] lg:min-h-0`}>
+            <PreviewPanel
+              formSchema={formSchema}
+              sessionId={currentSessionId}
+              onNavigate={navigate}
+              onSchemaUpdate={(schema, sessionId) => {
+                setFormSchema(schema);
+                setCurrentSessionId(sessionId);
+              }}
+              isGenerating={isGenerating}
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

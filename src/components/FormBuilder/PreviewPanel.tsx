@@ -3,6 +3,7 @@
 import { useState } from "react";
 import FormPreview from "./FormPreview";
 import FormActions from "./FormActions";
+import FormSkeleton from "../ui/FormSkeleton";
 
 interface FormField {
   label: string;
@@ -16,9 +17,10 @@ interface PreviewPanelProps {
   sessionId: string | null | undefined;
   onNavigate: (url: string) => void;
   onSchemaUpdate: (schema: FormField[], sessionId: string) => void;
+  isGenerating: boolean;
 }
 
-const PreviewPanel = ({ formSchema, sessionId, onNavigate, onSchemaUpdate }: PreviewPanelProps) => {
+const PreviewPanel = ({ formSchema, sessionId, onNavigate, onSchemaUpdate, isGenerating }: PreviewPanelProps) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (
@@ -52,15 +54,23 @@ const PreviewPanel = ({ formSchema, sessionId, onNavigate, onSchemaUpdate }: Pre
           isCollapsed ? "hidden lg:flex" : "flex"
         }`}
       >
-        {formSchema.length > 0 ? (
+        {isGenerating && formSchema.length === 0 ? (
+          <FormSkeleton />
+        ) : formSchema.length > 0 ? (
           <>
-            <FormPreview schema={formSchema} />
-            <FormActions
-              sessionId={sessionId}
-              formSchema={formSchema}
-              onNavigate={onNavigate}
-              onSchemaUpdate={onSchemaUpdate}
-            />
+            {isGenerating ? (
+              <FormSkeleton />
+            ) : (
+              <>
+                <FormPreview schema={formSchema} />
+                <FormActions
+                  sessionId={sessionId}
+                  formSchema={formSchema}
+                  onNavigate={onNavigate}
+                  onSchemaUpdate={onSchemaUpdate}
+                />
+              </>
+            )}
           </>
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center text-center text-slate-600">
