@@ -102,7 +102,7 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-8 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4">
+        <div className="flex flex-col sm:flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4">
           <div className="flex-1">
             <h1 className="text-4xl font-extrabold mb-2 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
               Dashboard
@@ -112,33 +112,37 @@ const Dashboard = () => {
             </p>
           </div>
 
-          <div className="flex gap-3">
-            <button
-              onClick={() => navigate("/forms")}
-              className="flex items-center gap-2 px-6 py-3 bg-white text-slate-700 border border-slate-200 rounded-2xl font-semibold cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md hover:transform hover:-translate-y-0.5"
-            >
-              <span className="material-symbols-outlined">list</span>
-              View All Forms
-            </button>
-            <button
-              onClick={() => navigate("/responses")}
-              className="flex items-center gap-2 px-6 py-3 bg-white text-slate-700 border border-slate-200 rounded-2xl font-semibold cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md hover:transform hover:-translate-y-0.5"
-            >
-              <span className="material-symbols-outlined">assignment</span>
-              View Responses
-            </button>
-            <button
-              onClick={() => navigate("/builder")}
-              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white border-0 rounded-2xl font-semibold cursor-pointer transition-all duration-200 shadow-lg shadow-purple-500/30 hover:transform hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-500/40"
-            >
-              <span className="material-symbols-outlined">add</span>
-              Create New Form
-            </button>
-          </div>
+          <div className="w-full flex flex-col gap-2 sm:flex-row sm:gap-3 sm:w-auto max-w-full overflow-x-auto">
+  <div className="flex flex-row gap-2 sm:gap-3 w-full sm:w-auto">
+    <button
+      onClick={() => navigate("/forms")}
+      className="flex items-center gap-2 px-6 py-3 bg-white text-slate-700 border border-slate-200 rounded-2xl font-semibold cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md hover:transform hover:-translate-y-0.5"
+    >
+      <span className="material-symbols-outlined">list</span>
+      View All Forms
+    </button>
+    <button
+      onClick={() => navigate("/responses")}
+      className="flex items-center gap-2 px-6 py-3 bg-white text-slate-700 border border-slate-200 rounded-2xl font-semibold cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md hover:transform hover:-translate-y-0.5"
+    >
+      <span className="material-symbols-outlined">assignment</span>
+      View Responses
+    </button>
+  </div>
+  <div className="w-full sm:w-auto">
+    <button
+      onClick={() => navigate("/builder")}
+      className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white border-0 rounded-2xl font-semibold cursor-pointer transition-all duration-200 shadow-lg shadow-purple-500/30 hover:transform hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-500/40 w-full sm:w-auto"
+    >
+      <span className="material-symbols-outlined">add</span>
+      Create New Form
+    </button>
+  </div>
+</div>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
           <div className="bg-white rounded-2xl p-6 shadow-lg border border-purple-100">
             <div className="flex items-center justify-between">
               <div>
@@ -247,7 +251,7 @@ const Dashboard = () => {
         )}
 
         {/* Recent Activity */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
           {/* Recent Forms */}
           <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100">
             <div className="flex items-center gap-3 mb-6">
@@ -337,7 +341,7 @@ const Dashboard = () => {
         </div>
 
         {/* Quick Actions */}
-        <div className="mt-8 bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl p-8 border border-purple-100">
+        <div className="mt-8 bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl p-4 sm:p-8 border border-purple-100">
           <div className="text-center">
             <h3 className="text-2xl font-bold text-slate-800 mb-4">
               Ready to create something amazing?
@@ -345,7 +349,7 @@ const Dashboard = () => {
             <p className="text-slate-600 mb-6">
               Use AI to build intelligent forms in minutes
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col gap-3 sm:flex-row sm:gap-4 justify-center items-stretch">
               <button
                 onClick={() => navigate("/builder")}
                 className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white border-0 rounded-2xl font-semibold cursor-pointer transition-all duration-200 shadow-lg shadow-purple-500/30 hover:transform hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-500/40"
