@@ -1,13 +1,16 @@
-import React from 'react';
-import { TestimonialCard } from '../common/TestimonialCard';
+import React from "react";
+import { TestimonialCard } from "../common/TestimonialCard";
 
 export const Testimonials: React.FC = () => (
   <section id="testimonials" className="py-20">
     <div className="container mx-auto px-4">
       <div className="text-center mb-16">
-        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">What Our Users Say</h2>
+        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          What You Might Say
+        </h2>
         <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-          Join thousands of satisfied users who have transformed their form creation process
+          Join thousands of satisfied users who have transformed their form
+          creation process
         </p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
