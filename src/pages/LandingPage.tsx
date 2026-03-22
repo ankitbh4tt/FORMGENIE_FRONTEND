@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { LandingHeader } from '../components/layout/LandingHeader';
 import { Hero } from '../components/sections/Hero';
 import { Features } from '../components/sections/Features';
-import { Testimonials } from '../components/sections/Testimonials';
+import { Benefits } from '../components/sections/Benefits';
 import { CtaSection } from '../components/sections/CtaSection';
 import { useNavigate } from 'react-router-dom';     
 import {useUser} from "@clerk/clerk-react";
@@ -76,7 +76,7 @@ export const LandingPage: React.FC = () => {
 
         <Hero />
         <Features />
-        <Testimonials />
+        <Benefits />
         <CtaSection />
       </div>
     </motion.div>

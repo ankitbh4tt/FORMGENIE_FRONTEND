@@ -33,8 +33,8 @@ export const LandingHeader: React.FC = () => {
             <a href="#features" className="text-sm font-medium text-slate-600 hover:text-violet-600 transition-colors duration-200">
               Features
             </a>
-            <a href="#testimonials" className="text-sm font-medium text-slate-600 hover:text-violet-600 transition-colors duration-200">
-              Testimonials
+            <a href="#benefits" className="text-sm font-medium text-slate-600 hover:text-violet-600 transition-colors duration-200">
+              Benefits
             </a>
             <SignedOut>
               <SignInButton mode="modal">
@@ -73,11 +73,11 @@ export const LandingHeader: React.FC = () => {
               Features
             </a>
             <a
-              href="#testimonials"
+              href="#benefits"
               className="px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors duration-200"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              Testimonials
+              Benefits
             </a>
             <hr className="my-1 border-slate-100" />
             <SignedOut>

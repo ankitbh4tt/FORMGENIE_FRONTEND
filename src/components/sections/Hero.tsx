@@ -1,12 +1,12 @@
-import React from 'react';
-import { Button } from '../common/Button';
-import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import { Button } from "../common/Button";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 export const Hero: React.FC = () => {
   const navigate = useNavigate();
   const handleClick = () => {
-    navigate('/dashboard');
+    navigate("/dashboard");
   };
 
   return (
@@ -32,7 +32,7 @@ export const Hero: React.FC = () => {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="text-xl text-slate-600 max-w-lg mx-auto md:mx-0"
             >
-              Create your forms with AI magic—fast and tailored to you.
+              Create your forms with AI magic-fast and tailored to you.
             </motion.p>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -53,15 +53,21 @@ export const Hero: React.FC = () => {
               className="flex flex-wrap justify-center md:justify-start gap-3"
             >
               <div className="flex items-center space-x-2 bg-white/60 backdrop-blur-sm px-4 py-2 rounded-xl shadow-sm hover:shadow-md hover:bg-white/80 transition-all duration-200">
-                <span className="material-symbols-outlined text-violet-600">bolt</span>
+                <span className="material-symbols-outlined text-violet-600">
+                  bolt
+                </span>
                 <span className="text-sm text-slate-700">Lightning Fast</span>
               </div>
               <div className="flex items-center space-x-2 bg-white/60 backdrop-blur-sm px-4 py-2 rounded-xl shadow-sm hover:shadow-md hover:bg-white/80 transition-all duration-200">
-                <span className="material-symbols-outlined text-violet-600">auto_awesome</span>
+                <span className="material-symbols-outlined text-violet-600">
+                  auto_awesome
+                </span>
                 <span className="text-sm text-slate-700">AI Powered</span>
               </div>
               <div className="flex items-center space-x-2 bg-white/60 backdrop-blur-sm px-4 py-2 rounded-xl shadow-sm hover:shadow-md hover:bg-white/80 transition-all duration-200">
-                <span className="material-symbols-outlined text-violet-600">code</span>
+                <span className="material-symbols-outlined text-violet-600">
+                  code
+                </span>
                 <span className="text-sm text-slate-700">No-Code Required</span>
               </div>
             </motion.div>
@@ -71,7 +77,9 @@ export const Hero: React.FC = () => {
               transition={{ duration: 0.6, delay: 0.8 }}
               className="pt-6 flex items-center justify-center md:justify-start space-x-4"
             >
-              <span className="text-slate-500 text-sm">Trusted by 10,000+ users</span>
+              <span className="text-slate-500 text-sm">
+                Trusted by 10,000+ users
+              </span>
               <div className="flex -space-x-3">
                 <div className="w-8 h-8 rounded-full bg-blue-100 border-2 border-white flex items-center justify-center text-xs font-medium text-blue-600">
                   JD
@@ -107,16 +115,21 @@ export const Hero: React.FC = () => {
                     <div className="w-2.5 h-2.5 rounded-full bg-emerald-400"></div>
                   </div>
                 </div>
-                <div className="text-sm text-slate-600 mb-3">Just describe your form...</div>
+                <div className="text-sm text-slate-600 mb-3">
+                  Just describe your form...
+                </div>
                 <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 mb-3">
                   <p className="text-slate-600 text-sm leading-relaxed">
-                    "I need a contact form with name, email, phone number and a dropdown for services. Add a message box
-                    and GDPR consent checkbox."
+                    "I need a contact form with name, email, phone number and a
+                    dropdown for services. Add a message box and GDPR consent
+                    checkbox."
                   </p>
                 </div>
                 <div className="flex justify-end mb-4">
                   <button className="px-4 py-2 bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-xl text-sm font-medium hover:from-violet-700 hover:to-purple-700 transition-all duration-200 flex items-center shadow-sm">
-                    <span className="material-symbols-outlined mr-1 text-sm align-middle">auto_awesome</span>
+                    <span className="material-symbols-outlined mr-1 text-sm align-middle">
+                      auto_awesome
+                    </span>
                     Generate Form
                   </button>
                 </div>
