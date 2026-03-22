@@ -32,14 +32,14 @@ export const LandingPage: React.FC = () => {
         transition={{ duration: 0.4 }}
       >
       <LandingHeader />
-      <div id="webcrumbs" className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative overflow-hidden">
+      <div id="webcrumbs" className="min-h-screen bg-gradient-to-br from-slate-50 via-violet-50/30 to-purple-50/30 relative overflow-hidden">
         {/* Floating particles */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute h-32 w-32 rounded-full bg-primary-300/20 blur-xl animate-float left-1/4 top-1/4"></div>
-          <div className="absolute h-24 w-24 rounded-full bg-purple-300/20 blur-xl animate-float-delay left-3/4 top-1/3"></div>
+          <div className="absolute h-24 w-24 rounded-full bg-violet-300/20 blur-xl animate-float-delay left-3/4 top-1/3"></div>
           <div className="absolute h-40 w-40 rounded-full bg-blue-300/20 blur-xl animate-float-slow left-1/2 top-2/3"></div>
           <div className="absolute h-36 w-36 rounded-full bg-teal-300/20 blur-xl animate-float-delay left-1/5 top-2/3"></div>
-          <div className="absolute h-28 w-28 rounded-full bg-pink-300/20 blur-xl animate-float-slow left-4/5 top-1/5"></div>
+          <div className="absolute h-28 w-28 rounded-full bg-violet-200/20 blur-xl animate-float-slow left-4/5 top-1/5"></div>
         </div>
 
         {/* Doodles */}

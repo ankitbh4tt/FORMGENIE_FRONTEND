@@ -1,5 +1,3 @@
-"use client";
-
 import { ReactNode, MouseEventHandler } from "react";
 
 interface LoadingButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {

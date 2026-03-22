@@ -1,5 +1,3 @@
-"use client";
-
 import { useRef, useEffect } from "react";
 import MessageBubble from "./MessageBubble";
 import TypingIndicator from "../ui/TypingIndicator";
@@ -55,11 +53,11 @@ const ChatPanel = ({
   };
 
   return (
-    <div className="flex flex-col bg-white rounded-3xl shadow-2xl border border-purple-100 overflow-hidden flex-1 max-h-full">
+    <div className="flex flex-col bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex-1 max-h-full">
       <div className="p-4 sm:p-6 border-b border-slate-100 bg-gradient-to-r from-white to-slate-50 flex justify-between items-start">
         <div className="flex-1">
-          <h2 className="text-xl sm:text-2xl font-bold mb-1 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-            AI Form Builder
+          <h2 className="text-xl sm:text-2xl font-bold mb-1 bg-gradient-to-r           from-violet-600 to-purple-600 bg-clip-text text-transparent">
+                      AI Form Builder
           </h2>
           <p className="text-slate-600 text-xs sm:text-sm">
             Describe the form you want to create
@@ -98,14 +96,14 @@ const ChatPanel = ({
             onChange={(e) => setInputValue(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="Describe your form..."
-            className="flex-1 p-3 sm:p-4 border-2 border-slate-200 rounded-2xl text-sm resize-none transition-all duration-200 font-inherit min-h-[48px] max-h-[120px] focus:outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-100 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed"
+            className="flex-1 p-3 sm:p-4 border-2 border-slate-200 rounded-2xl text-sm resize-none transition-all duration-200 font-inherit min-h-[48px] max-h-[120px] focus:outline-none focus:border-violet-500 focus:ring-4 focus:ring-violet-100 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed"
             rows={1}
             disabled={isLoading}
           />
           <button
             type="submit"
             disabled={!inputValue.trim() || isLoading}
-            className="p-3 bg-gradient-to-r from-purple-600 to-pink-600 border-0 rounded-xl text-white cursor-pointer transition-all duration-200 flex items-center justify-center min-w-[48px] h-12 hover:transform hover:-translate-y-0.5 hover:shadow-lg hover:shadow-purple-500/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none active:scale-95"
+            className="p-3 bg-gradient-to-r from-violet-600 to-purple-600 border-0 rounded-xl text-white cursor-pointer transition-all duration-200 flex items-center justify-center min-w-[48px] h-12 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-violet-500/25 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none active:scale-95"
           >
             <span className="material-symbols-outlined text-xl">
               {isLoading ? "hourglass_empty" : "send"}
@@ -123,29 +121,29 @@ const ChatPanel = ({
                     "Create a contact form with name, email, and message"
                   )
                 }
-                className="px-3 sm:px-4 py-1.5 sm:py-2 bg-slate-50 border border-slate-200 rounded-full text-xs text-slate-600 cursor-pointer transition-all duration-200 hover:bg-slate-100 hover:border-purple-500 hover:text-purple-600 active:scale-95"
-              >
-                📝 Contact Form
-              </button>
-              <button
-                type="button"
-                onClick={() =>
-                  setInputValue(
-                    "Build a survey with multiple choice and rating questions"
-                  )
-                }
-                className="px-3 sm:px-4 py-1.5 sm:py-2 bg-slate-50 border border-slate-200 rounded-full text-xs text-slate-600 cursor-pointer transition-all duration-200 hover:bg-slate-100 hover:border-purple-500 hover:text-purple-600 active:scale-95"
-              >
-                📊 Survey Form
-              </button>
-              <button
-                type="button"
-                onClick={() =>
-                  setInputValue(
-                    "Make a registration form with personal details"
-                  )
-                }
-                className="px-3 sm:px-4 py-1.5 sm:py-2 bg-slate-50 border border-slate-200 rounded-full text-xs text-slate-600 cursor-pointer transition-all duration-200 hover:bg-slate-100 hover:border-purple-500 hover:text-purple-600 active:scale-95"
+                className="px-3 sm:px-4 py-1.5 sm:py-2 bg-slate-50 border border-slate-200 rounded-full text-xs text-slate-600 cursor-pointer transition-all duration-200 hover:bg-slate-100               hover:border-violet-500 hover:text-violet-600 active:scale-95"
+                            >
+                              📝 Contact Form
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setInputValue(
+                                  "Build a survey with multiple choice and rating questions"
+                                )
+                              }
+                              className="px-3 sm:px-4 py-1.5 sm:py-2 bg-slate-50 border border-slate-200 rounded-full text-xs text-slate-600 cursor-pointer transition-all duration-200 hover:bg-slate-100 hover:border-violet-500 hover:text-violet-600 active:scale-95"
+                            >
+                              📊 Survey Form
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setInputValue(
+                                  "Make a registration form with personal details"
+                                )
+                              }
+                              className="px-3 sm:px-4 py-1.5 sm:py-2 bg-slate-50 border border-slate-200 rounded-full text-xs text-slate-600 cursor-pointer transition-all duration-200 hover:bg-slate-100 hover:border-violet-500 hover:text-violet-600 active:scale-95"
               >
                 ✍️ Registration Form
               </button>

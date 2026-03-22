@@ -46,7 +46,7 @@ const FormSelector = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen gap-4 text-slate-600">
         <div className="relative w-15 h-15">
-          <div className="absolute w-full h-full border-3 border-transparent border-t-purple-600 rounded-full animate-spin"></div>
+          <div className="absolute w-full h-full border-3 border-transparent border-t-violet-600 rounded-full animate-spin"></div>
         </div>
         <p>Loading your forms...</p>
       </div>
@@ -55,11 +55,11 @@ const FormSelector = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-8 px-4">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4">
-          <div className="flex-1">
-            <h1 className="text-4xl font-extrabold mb-2 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+      <div className="      max-w-7xl mx-auto">
+              {/* Header */}
+              <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4">
+                <div className="flex-1">
+                  <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">
               Select Form to View Responses
             </h1>
             <p className="text-slate-600 text-lg">
@@ -70,14 +70,14 @@ const FormSelector = () => {
           <div className="flex gap-3">
             <button
               onClick={() => navigate("/dashboard")}
-              className="flex items-center gap-2 px-6 py-3 bg-white text-slate-700 border border-slate-200 rounded-2xl font-semibold cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md hover:transform hover:-translate-y-0.5"
-            >
-              <span className="material-symbols-outlined">dashboard</span>
-              Dashboard
-            </button>
-            <button
-              onClick={() => navigate("/forms")}
-              className="flex items-center gap-2 px-6 py-3 bg-white text-slate-700 border border-slate-200 rounded-2xl font-semibold cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md hover:transform hover:-translate-y-0.5"
+              className="flex items-center gap-2 px-6 py-3 bg-white text-slate-700 border border-slate-200             rounded-xl font-semibold cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5"
+                        >
+                          <span className="material-symbols-outlined">dashboard</span>
+                          Dashboard
+                        </button>
+                        <button
+                          onClick={() => navigate("/forms")}
+                          className="flex items-center gap-2 px-6 py-3 bg-white text-slate-700 border border-slate-200 rounded-xl font-semibold cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5"
             >
               <span className="material-symbols-outlined">list</span>
               All Forms
@@ -108,16 +108,16 @@ const FormSelector = () => {
               </p>
               <button
                 onClick={() => navigate("/builder")}
-                className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white border-0 rounded-2xl font-semibold cursor-pointer transition-all duration-200 shadow-lg shadow-purple-500/30 hover:transform hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-500/40"
-              >
-                Create Your First Form
+                className="              px-8 py-4 bg-gradient-to-r from-violet-600 to-purple-600 text-white border-0 rounded-xl font-semibold cursor-pointer transition-all duration-200 shadow-lg shadow-violet-500/25 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-violet-500/30"
+                            >
+                              Create Your First Form
               </button>
             </div>
           ) : (
             forms.map((form) => (
               <div
                 key={form.formId}
-                className="bg-white rounded-2xl p-6 shadow-lg border border-purple-100 transition-all duration-200 animate-in fade-in hover:transform hover:-translate-y-1 hover:shadow-xl"
+                className="bg-white rounded-2xl p-6 shadow-md border border-slate-100 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
               >
                 <div className="flex flex-col justify-between h-full">
                   <div>
@@ -145,7 +145,7 @@ const FormSelector = () => {
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleViewResponses(form.formId)}
-                      className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white border-0 rounded-xl font-semibold cursor-pointer transition-all duration-200 shadow-lg shadow-green-500/30 hover:transform hover:-translate-y-1 hover:shadow-xl hover:shadow-green-500/40"
+                      className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-violet-600 to-purple-600 text-white border-0 rounded-xl font-semibold cursor-pointer transition-all duration-200 shadow-lg shadow-violet-500/25 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-violet-500/30"
                     >
                       <span className="material-symbols-outlined">
                         assignment
@@ -154,7 +154,7 @@ const FormSelector = () => {
                     </button>
                     <button
                       onClick={() => navigate(`/form/${form.formId}`)}
-                      className="p-3 border-0 rounded-xl cursor-pointer transition-all duration-200 flex items-center justify-center bg-blue-50 text-blue-600 hover:bg-blue-100"
+                      className="p-3 border-0 rounded-xl cursor-pointer transition-all duration-200 flex items-center justify-center bg-violet-50 text-violet-600 hover:bg-violet-100"
                       title="Preview Form"
                     >
                       <span className="material-symbols-outlined">

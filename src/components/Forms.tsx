@@ -85,7 +85,7 @@ const Forms = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen gap-4 text-slate-600">
         <div className="relative w-15 h-15">
-          <div className="absolute w-full h-full border-3 border-transparent border-t-purple-600 rounded-full animate-spin"></div>
+          <div className="absolute w-full h-full border-3 border-transparent border-t-violet-600 rounded-full animate-spin"></div>
         </div>
         <p>Loading your forms...</p>
       </div>
@@ -94,10 +94,10 @@ const Forms = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-8 px-4">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4">
-          <div className="flex-1">
-            <h1 className="text-4xl font-extrabold mb-2 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+      <div className="      max-w-7xl mx-auto">
+              <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4">
+                <div className="flex-1">
+                  <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">
               My Forms
             </h1>
             <p className="text-slate-600 text-lg">
@@ -109,23 +109,23 @@ const Forms = () => {
   <div className="flex flex-row gap-2 sm:gap-3 w-full sm:w-auto">
     <button
       onClick={() => navigate("/dashboard")}
-      className="flex items-center gap-2 px-6 py-3 bg-white text-slate-700 border border-slate-200 rounded-2xl font-semibold cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md hover:transform hover:-translate-y-0.5 w-full sm:w-auto"
-    >
-      <span className="material-symbols-outlined">dashboard</span>
-      Dashboard
-    </button>
-    <button
-      onClick={() => navigate("/responses")}
-      className="flex items-center gap-2 px-6 py-3 bg-white text-slate-700 border border-slate-200 rounded-2xl font-semibold cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md hover:transform hover:-translate-y-0.5 w-full sm:w-auto"
-    >
-      <span className="material-symbols-outlined">assignment</span>
-      View All Responses
-    </button>
-  </div>
-  <div className="w-full sm:w-auto">
-    <button
-      onClick={() => navigate("/builder")}
-      className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white border-0 rounded-2xl font-semibold cursor-pointer transition-all duration-200 shadow-lg shadow-purple-500/30 hover:transform hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-500/40 w-full sm:w-auto"
+      className="flex items-center gap-2 px-6 py-3 bg-white text-slate-700 border border-slate-200   rounded-xl font-semibold cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 w-full sm:w-auto"
+      >
+        <span className="material-symbols-outlined">dashboard</span>
+        Dashboard
+      </button>
+      <button
+        onClick={() => navigate("/responses")}
+        className="flex items-center gap-2 px-6 py-3 bg-white text-slate-700 border border-slate-200 rounded-xl font-semibold cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 w-full sm:w-auto"
+      >
+        <span className="material-symbols-outlined">assignment</span>
+        View All Responses
+      </button>
+    </div>
+    <div className="w-full sm:w-auto">
+      <button
+        onClick={() => navigate("/builder")}
+        className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-violet-600 to-purple-600 text-white border-0 rounded-xl font-semibold cursor-pointer transition-all duration-200 shadow-lg shadow-violet-500/25 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-violet-500/30 w-full sm:w-auto"
     >
       <span className="material-symbols-outlined">add</span>
       Create New Form
@@ -157,16 +157,16 @@ const Forms = () => {
               </p>
               <button
                 onClick={() => navigate("/builder")}
-                className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white border-0 rounded-2xl font-semibold cursor-pointer transition-all duration-200 shadow-lg shadow-purple-500/30 hover:transform hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-500/40"
-              >
-                Create Your First Form
+                className="              px-8 py-4 bg-gradient-to-r from-violet-600 to-purple-600 text-white border-0 rounded-xl font-semibold cursor-pointer transition-all duration-200 shadow-lg shadow-violet-500/25 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-violet-500/30"
+                            >
+                              Create Your First Form
               </button>
             </div>
           ) : (
             forms.map((form) => (
               <div
                 key={form.formId}
-                className="bg-white rounded-2xl p-6 shadow-lg border border-purple-100 transition-all duration-200 animate-in fade-in hover:transform hover:-translate-y-1 hover:shadow-xl"
+                className="bg-white rounded-2xl p-6 shadow-md border border-slate-100 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
               >
                 <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-4 gap-3">
                   <h3 className="text-xl font-bold text-slate-800 leading-tight">
@@ -175,7 +175,7 @@ const Forms = () => {
                   <div className="flex gap-2 flex-shrink-0 self-end lg:self-auto">
                     <button
                       onClick={() => navigate(`/form/${form.formId}`)}
-                      className="p-2 border-0 rounded-lg cursor-pointer transition-all duration-200 flex items-center justify-center bg-blue-50 text-blue-600 hover:bg-blue-100"
+                      className="p-2 border-0 rounded-lg cursor-pointer transition-all duration-200 flex items-center justify-center bg-violet-50 text-violet-600 hover:bg-violet-100"
                       title="View Form"
                     >
                       <span className="material-symbols-outlined">
@@ -184,7 +184,7 @@ const Forms = () => {
                     </button>
                     <button
                       onClick={() => handleShareForm(form.formId, form.title)}
-                      className="p-2 border-0 rounded-lg cursor-pointer transition-all duration-200 flex items-center justify-center bg-purple-50 text-purple-600 hover:bg-purple-100"
+                      className="p-2 border-0 rounded-lg cursor-pointer transition-all duration-200 flex items-center justify-center bg-violet-50 text-violet-600 hover:bg-violet-100"
                       title="Share Form"
                     >
                       <span className="material-symbols-outlined">share</span>

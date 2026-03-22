@@ -162,7 +162,7 @@ const FormResponses = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen gap-4 text-slate-600">
         <div className="relative w-15 h-15">
-          <div className="absolute w-full h-full border-3 border-transparent border-t-purple-600 rounded-full animate-spin"></div>
+          <div className="absolute w-full h-full border-3 border-transparent border-t-violet-600 rounded-full animate-spin"></div>
         </div>
         <p>Loading responses...</p>
       </div>
@@ -175,7 +175,7 @@ const FormResponses = () => {
         {/* Header */}
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4">
           <div className="flex-1">
-            <h1 className="text-4xl font-extrabold mb-2 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+            <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">
               {formTitle} - Responses
             </h1>
             <p className="text-slate-600 text-lg">
@@ -186,14 +186,14 @@ const FormResponses = () => {
           <div className="flex gap-3">
             <button
               onClick={() => navigate("/forms")}
-              className="flex items-center gap-2 px-6 py-3 bg-white text-slate-700 border border-slate-200 rounded-2xl font-semibold cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md hover:transform hover:-translate-y-0.5"
-            >
-              <span className="material-symbols-outlined">list</span>
-              All Forms
-            </button>
-            <button
-              onClick={() => navigate("/dashboard")}
-              className="flex items-center gap-2 px-6 py-3 bg-white text-slate-700 border border-slate-200 rounded-2xl font-semibold cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md hover:transform hover:-translate-y-0.5"
+              className="flex items-center gap-2 px-6 py-3 bg-white text-slate-700 border border-slate-200             rounded-xl font-semibold cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5"
+                        >
+                          <span className="material-symbols-outlined">list</span>
+                          All Forms
+                        </button>
+                        <button
+                          onClick={() => navigate("/dashboard")}
+                          className="flex items-center gap-2 px-6 py-3 bg-white text-slate-700 border border-slate-200 rounded-xl font-semibold cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5"
             >
               <span className="material-symbols-outlined">dashboard</span>
               Dashboard
@@ -224,13 +224,13 @@ const FormResponses = () => {
             <div className="flex gap-4 justify-center">
               <button
                 onClick={() => navigate(`/form/${formId}`)}
-                className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white border-0 rounded-2xl font-semibold cursor-pointer transition-all duration-200 shadow-lg shadow-purple-500/30 hover:transform hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-500/40"
-              >
-                View Form
-              </button>
-              <button
-                onClick={() => navigate("/forms")}
-                className="px-8 py-4 bg-white text-slate-700 border border-slate-200 rounded-2xl font-semibold cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md hover:transform hover:-translate-y-0.5"
+                className="              px-8 py-4 bg-gradient-to-r from-violet-600 to-purple-600 text-white border-0 rounded-xl font-semibold cursor-pointer transition-all duration-200 shadow-lg shadow-violet-500/25 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-violet-500/30"
+                            >
+                              View Form
+                            </button>
+                            <button
+                              onClick={() => navigate("/forms")}
+                              className="px-8 py-4 bg-white text-slate-700 border border-slate-200 rounded-xl font-semibold cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5"
               >
                 Back to Forms
               </button>
@@ -251,7 +251,7 @@ const FormResponses = () => {
                       placeholder="Search responses..."
                       value={globalFilter}
                       onChange={(e) => setGlobalFilter(e.target.value)}
-                      className="pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      className="pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent"
                     />
                   </div>
                   <div className="text-sm text-slate-600">

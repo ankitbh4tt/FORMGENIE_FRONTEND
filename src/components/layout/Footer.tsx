@@ -1,17 +1,14 @@
 import React from "react";
 import { Logo } from "../common/Logo";
-import { NavItem } from "../common/NavItem";
 
 export const Footer: React.FC = () => (
   <footer className="bg-gradient-to-br from-slate-50 to-slate-100 border-t border-slate-200">
-    <div className="container mx-auto px-4 py-16">
-      {/* Main Footer Content */}
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
-        {/* Brand Section */}
         <div className="col-span-1 md:col-span-2">
           <div className="flex items-center space-x-2 mb-4">
             <Logo />
-            <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-600 to-purple-600">
+            <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-600 to-purple-600">
               FormGenie
             </span>
           </div>
@@ -19,116 +16,63 @@ export const Footer: React.FC = () => (
             Create intelligent forms with AI assistance. Build, share, and
             collect responses effortlessly.
           </p>
-          <div className="flex space-x-4">
+          <div className="flex space-x-3">
             <a
               href="#"
-              className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center text-blue-600 hover:from-blue-200 hover:to-blue-300 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg"
+              className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-violet-100 hover:text-violet-600 transition-all duration-200"
               title="Follow us on Twitter"
             >
-              <span className="material-symbols-outlined text-xl">
+              <span className="material-symbols-outlined text-lg">
                 alternate_email
               </span>
             </a>
             <a
               href="#"
-              className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center text-blue-600 hover:from-blue-200 hover:to-blue-300 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg"
+              className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-violet-100 hover:text-violet-600 transition-all duration-200"
               title="Connect on LinkedIn"
             >
-              <span className="material-symbols-outlined text-xl">work</span>
+              <span className="material-symbols-outlined text-lg">work</span>
             </a>
             <a
               href="#"
-              className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-100 to-purple-200 flex items-center justify-center text-purple-600 hover:from-purple-200 hover:to-purple-300 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg"
+              className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-violet-100 hover:text-violet-600 transition-all duration-200"
               title="Join our Discord"
             >
-              <span className="material-symbols-outlined text-xl">chat</span>
+              <span className="material-symbols-outlined text-lg">chat</span>
             </a>
           </div>
         </div>
 
-        {/* Product Links */}
         <div>
-          <h3 className="text-lg font-semibold text-slate-800 mb-4">Product</h3>
-          <div className="space-y-3">
-            <NavItem
-              href="#features"
-              className="text-slate-600 hover:text-purple-600 transition-colors"
-            >
-              Features
-            </NavItem>
-            <NavItem
-              href="#pricing"
-              className="text-slate-600 hover:text-purple-600 transition-colors"
-            >
-              Pricing
-            </NavItem>
-            <NavItem
-              href="#templates"
-              className="text-slate-600 hover:text-purple-600 transition-colors"
-            >
-              Templates
-            </NavItem>
-            <NavItem
-              href="#integrations"
-              className="text-slate-600 hover:text-purple-600 transition-colors"
-            >
-              Integrations
-            </NavItem>
+          <h3 className="text-sm font-semibold text-slate-800 uppercase tracking-wider mb-4">Product</h3>
+          <div className="space-y-3 flex flex-col">
+            <a href="#features" className="text-slate-600 hover:text-violet-600 transition-colors duration-200 text-sm">Features</a>
+            <a href="#pricing" className="text-slate-600 hover:text-violet-600 transition-colors duration-200 text-sm">Pricing</a>
+            <a href="#templates" className="text-slate-600 hover:text-violet-600 transition-colors duration-200 text-sm">Templates</a>
+            <a href="#integrations" className="text-slate-600 hover:text-violet-600 transition-colors duration-200 text-sm">Integrations</a>
           </div>
         </div>
 
-        {/* Support Links */}
         <div>
-          <h3 className="text-lg font-semibold text-slate-800 mb-4">Support</h3>
-          <div className="space-y-3">
-            <NavItem
-              href="#help"
-              className="text-slate-600 hover:text-purple-600 transition-colors"
-            >
-              Help Center
-            </NavItem>
-            <NavItem
-              href="#docs"
-              className="text-slate-600 hover:text-purple-600 transition-colors"
-            >
-              Documentation
-            </NavItem>
-            <NavItem
-              href="#contact"
-              className="text-slate-600 hover:text-purple-600 transition-colors"
-            >
-              Contact Us
-            </NavItem>
-            <NavItem
-              href="#status"
-              className="text-slate-600 hover:text-purple-600 transition-colors"
-            >
-              Status
-            </NavItem>
+          <h3 className="text-sm font-semibold text-slate-800 uppercase tracking-wider mb-4">Support</h3>
+          <div className="space-y-3 flex flex-col">
+            <a href="#help" className="text-slate-600 hover:text-violet-600 transition-colors duration-200 text-sm">Help Center</a>
+            <a href="#docs" className="text-slate-600 hover:text-violet-600 transition-colors duration-200 text-sm">Documentation</a>
+            <a href="#contact" className="text-slate-600 hover:text-violet-600 transition-colors duration-200 text-sm">Contact Us</a>
+            <a href="#status" className="text-slate-600 hover:text-violet-600 transition-colors duration-200 text-sm">Status</a>
           </div>
         </div>
       </div>
 
-      {/* Bottom Section */}
       <div className="pt-8 border-t border-slate-200">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6 mb-4 md:mb-0">
             <p className="text-slate-500 text-sm">
-              © 2024 FormGenie. All rights reserved.
+              &copy; 2024 FormGenie. All rights reserved.
             </p>
             <div className="flex space-x-6">
-              <NavItem
-                href="#privacy"
-                className="text-slate-500 hover:text-purple-600 text-sm transition-colors"
-              >
-                Privacy Policy
-              </NavItem>
-              <NavItem
-                href="#terms"
-                className="text-slate-500 hover:text-purple-600 text-sm transition-colors"
-              >
-                Terms of Service
-              </NavItem>
+              <a href="#privacy" className="text-slate-500 hover:text-violet-600 text-sm transition-colors duration-200">Privacy Policy</a>
+              <a href="#terms" className="text-slate-500 hover:text-violet-600 text-sm transition-colors duration-200">Terms of Service</a>
             </div>
           </div>
 

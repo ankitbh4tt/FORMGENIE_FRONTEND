@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import LoadingButton from "../ui/LoadingButton";
 import { useApi } from "../../../services/api";
@@ -130,18 +128,18 @@ const FormActions = ({
         <LoadingButton
           onClick={handlePublish}
           disabled={!formSchema.length}
-          className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white border-0 rounded-2xl font-semibold cursor-pointer transition-all duration-200 shadow-lg shadow-purple-500/30 hover:transform hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-500/40 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
-          loading={isPublishing}
-        >
-          <span className="material-symbols-outlined">publish</span>
-          Save & Publish
-        </LoadingButton>
+          className="px-6 py-3 bg-gradient-to-r         from-violet-600 to-purple-600 text-white border-0 rounded-xl font-semibold cursor-pointer transition-all duration-200 shadow-lg shadow-violet-500/25 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-violet-500/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
+                  loading={isPublishing}
+                >
+                  <span className="material-symbols-outlined">publish</span>
+                  Save & Publish
+                </LoadingButton>
 
-        <LoadingButton
-          onClick={handleAmendForm}
-          disabled={!formSchema.length || !(formId || sessionId)}
-          loading={isAmending}
-          className="px-6 py-3 border-2 border-purple-300 text-purple-600 bg-white rounded-2xl font-semibold cursor-pointer transition-all duration-200 hover:bg-purple-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                <LoadingButton
+                  onClick={handleAmendForm}
+                  disabled={!formSchema.length || !(formId || sessionId)}
+                  loading={isAmending}
+          className="px-6 py-3 border-2 border-violet-300 text-violet-600 bg-white rounded-2xl font-semibold cursor-pointer transition-all duration-200 hover:bg-violet-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
           <span className="material-symbols-outlined">edit</span>
           Amend Form
@@ -155,13 +153,13 @@ const FormActions = ({
           onClick={() => setShowSaveModal(false)}
         >
           <div
-            className="bg-white rounded-3xl shadow-2xl border border-purple-100 overflow-hidden max-w-md w-full"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="p-6 border-b border-slate-100 bg-gradient-to-r from-white to-slate-50 flex justify-between items-center">
-              <h3 className="text-xl font-bold text-slate-800">
-                Save & Publish Form
-              </h3>
+            className="bg-white rounded-3xl shadow-2xl           border border-slate-200 overflow-hidden max-w-md w-full"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <div className="p-6 border-b border-slate-100 bg-gradient-to-r from-white to-slate-50 flex justify-between items-center">
+                        <h3 className="text-xl font-bold text-slate-800">
+                          Save & Publish Form
+                        </h3>
               <button
                 onClick={() => setShowSaveModal(false)}
                 className="p-2 bg-transparent border-0 text-slate-400 cursor-pointer rounded-lg transition-all duration-200 hover:bg-slate-100 hover:text-slate-600"
@@ -174,7 +172,7 @@ const FormActions = ({
               <div className="flex flex-col gap-2">
                 <label
                   htmlFor="form-title"
-                  className="text-sm font-semibold text-gray-700"
+                  className="text-sm font-semibold text-slate-700"
                 >
                   Form Title *
                 </label>
@@ -184,7 +182,7 @@ const FormActions = ({
                   value={formTitle}
                   onChange={(e) => setFormTitle(e.target.value)}
                   placeholder="Enter form title"
-                  className="px-4 py-3 border-2 border-slate-200 rounded-xl text-sm transition-all duration-200 font-inherit focus:outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-100"
+                  className="px-4 py-3 border-2 border-slate-200 rounded-xl text-sm transition-all duration-200 font-inherit focus:outline-none focus:border-violet-500 focus:ring-4 focus:ring-violet-100"
                   autoFocus
                 />
               </div>
@@ -192,7 +190,7 @@ const FormActions = ({
               <div className="flex flex-col gap-2">
                 <label
                   htmlFor="form-description"
-                  className="text-sm font-semibold text-gray-700"
+                  className="text-sm font-semibold text-slate-700"
                 >
                   Description (Optional)
                 </label>
@@ -201,7 +199,7 @@ const FormActions = ({
                   value={formDescription}
                   onChange={(e) => setFormDescription(e.target.value)}
                   placeholder="Enter form description"
-                  className="px-4 py-3 border-2 border-slate-200 rounded-xl text-sm resize-vertical min-h-[100px] transition-all duration-200 font-inherit focus:outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-100"
+                  className="px-4 py-3 border-2 border-slate-200 rounded-xl text-sm resize-vertical min-h-[100px] transition-all duration-200 font-inherit focus:outline-none focus:border-violet-500 focus:ring-4 focus:ring-violet-100"
                   rows={3}
                 />
               </div>
@@ -218,10 +216,10 @@ const FormActions = ({
                 onClick={handleSaveForm}
                 disabled={!formTitle.trim()}
                 loading={isPublishing}
-                className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white border-0 rounded-2xl font-semibold cursor-pointer transition-all duration-200 shadow-lg shadow-purple-500/30 hover:transform hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-500/40 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
-              >
-                <span className="material-symbols-outlined">publish</span>
-                Publish Form
+                className="px-6 py-3 bg-gradient-to-r               from-violet-600 to-purple-600 text-white border-0 rounded-xl font-semibold cursor-pointer transition-all duration-200 shadow-lg shadow-violet-500/25 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-violet-500/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
+                            >
+                              <span className="material-symbols-outlined">publish</span>
+                              Publish Form
               </LoadingButton>
             </div>
           </div>
@@ -235,12 +233,12 @@ const FormActions = ({
           onClick={() => setShowAmendModal(false)}
         >
           <div
-            className="bg-white rounded-3xl shadow-2xl border border-purple-100 overflow-hidden max-w-md w-full"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="p-6 border-b border-slate-100 bg-gradient-to-r from-white to-slate-50 flex justify-between items-center">
-              <h3 className="text-xl font-bold text-slate-800">
-                Refine Your Form
+            className="bg-white rounded-3xl shadow-2xl           border border-slate-200 overflow-hidden max-w-md w-full"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <div className="p-6 border-b border-slate-100 bg-gradient-to-r from-white to-slate-50 flex justify-between items-center">
+                        <h3 className="text-xl font-bold text-slate-800">
+                          Refine Your Form
               </h3>
               <button
                 onClick={() => setShowAmendModal(false)}
@@ -254,7 +252,7 @@ const FormActions = ({
               <div className="flex flex-col gap-2">
                 <label
                   htmlFor="refinement-prompt"
-                  className="text-sm font-semibold text-gray-700"
+                  className="text-sm font-semibold text-slate-700"
                 >
                   Refinement Prompt *
                 </label>
@@ -263,7 +261,7 @@ const FormActions = ({
                   value={refinementPrompt}
                   onChange={(e) => setRefinementPrompt(e.target.value)}
                   placeholder="e.g., 'Make the email field required and add a phone number field'"
-                  className="px-4 py-3 border-2 border-slate-200 rounded-xl text-sm resize-vertical min-h-[100px] transition-all duration-200 font-inherit focus:outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-100"
+                  className="px-4 py-3 border-2 border-slate-200 rounded-xl text-sm resize-vertical min-h-[100px] transition-all duration-200 font-inherit focus:outline-none focus:border-violet-500 focus:ring-4 focus:ring-violet-100"
                   rows={3}
                 />
               </div>
@@ -280,9 +278,9 @@ const FormActions = ({
                 onClick={handleRefineUnsaved}
                 disabled={!refinementPrompt.trim()}
                 loading={isAmending}
-                className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white border-0 rounded-2xl font-semibold cursor-pointer transition-all duration-200 shadow-lg shadow-purple-500/30 hover:transform hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-500/40 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
-              >
-                Refine Form
+                className="px-6 py-3 bg-gradient-to-r               from-violet-600 to-purple-600 text-white border-0 rounded-xl font-semibold cursor-pointer transition-all duration-200 shadow-lg shadow-violet-500/25 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-violet-500/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
+                            >
+                              Refine Form
               </LoadingButton>
             </div>
           </div>

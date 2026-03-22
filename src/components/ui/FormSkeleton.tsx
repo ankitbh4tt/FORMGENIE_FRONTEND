@@ -17,20 +17,20 @@ const FormSkeleton = () => {
 
       {/* Button Skeleton */}
       <div className="flex gap-3 pt-4">
-        <div className="h-12 bg-gradient-to-r from-purple-200 to-pink-200 rounded-xl w-32"></div>
+        <div className="h-12 bg-gradient-to-r from-violet-200 to-purple-200 rounded-xl w-32"></div>
         <div className="h-12 bg-gradient-to-r from-slate-200 to-slate-100 rounded-xl w-24"></div>
       </div>
 
       {/* Loading Text */}
       <div className="flex items-center justify-center gap-2 pt-4">
         <div className="flex gap-1">
-          <div className="w-2 h-2 rounded-full bg-purple-400 animate-bounce"></div>
+          <div className="w-2 h-2 rounded-full bg-violet-400 animate-bounce"></div>
           <div
-            className="w-2 h-2 rounded-full bg-purple-400 animate-bounce"
+            className="w-2 h-2 rounded-full bg-violet-400 animate-bounce"
             style={{ animationDelay: "0.1s" }}
           ></div>
           <div
-            className="w-2 h-2 rounded-full bg-purple-400 animate-bounce"
+            className="w-2 h-2 rounded-full bg-violet-400 animate-bounce"
             style={{ animationDelay: "0.2s" }}
           ></div>
         </div>

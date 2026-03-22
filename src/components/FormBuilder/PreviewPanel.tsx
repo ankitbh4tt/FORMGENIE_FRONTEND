@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import FormPreview from "./FormPreview";
 import FormActions from "./FormActions";
@@ -25,7 +23,7 @@ const PreviewPanel = ({ formSchema, sessionId, onNavigate, onSchemaUpdate, isGen
 
   return (
     <div
-      className={`flex flex-col bg-white rounded-3xl shadow-2xl border border-purple-100 overflow-hidden flex-1 max-h-full transition-all duration-300 ${
+      className={`flex flex-col bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex-1 max-h-full transition-all duration-300 ${
         isCollapsed ? "lg:flex" : ""
       }`}
     >
@@ -41,7 +39,7 @@ const PreviewPanel = ({ formSchema, sessionId, onNavigate, onSchemaUpdate, isGen
 
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="p-2 bg-transparent border-0 text-purple-600 cursor-pointer rounded-lg transition-all duration-200 lg:hidden hover:bg-slate-50"
+          className="p-2 bg-transparent border-0 text-violet-600 cursor-pointer rounded-lg transition-all duration-200 lg:hidden hover:bg-slate-50"
         >
           <span className="material-symbols-outlined">
             {isCollapsed ? "expand_more" : "expand_less"}

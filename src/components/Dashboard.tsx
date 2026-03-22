@@ -63,7 +63,7 @@ const Dashboard = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen gap-4 text-slate-600">
         <div className="relative w-15 h-15">
-          <div className="absolute w-full h-full border-3 border-transparent border-t-purple-600 rounded-full animate-spin"></div>
+          <div className="absolute w-full h-full border-3 border-transparent border-t-violet-600 rounded-full animate-spin"></div>
         </div>
         <p>Loading your dashboard...</p>
       </div>
@@ -104,7 +104,7 @@ const Dashboard = () => {
         {/* Header */}
         <div className="flex flex-col sm:flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4">
           <div className="flex-1">
-            <h1 className="text-4xl font-extrabold mb-2 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+            <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">
               Dashboard
             </h1>
             <p className="text-slate-600 text-lg">
@@ -116,23 +116,23 @@ const Dashboard = () => {
   <div className="flex flex-row gap-2 sm:gap-3 w-full sm:w-auto">
     <button
       onClick={() => navigate("/forms")}
-      className="flex items-center gap-2 px-6 py-3 bg-white text-slate-700 border border-slate-200 rounded-2xl font-semibold cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md hover:transform hover:-translate-y-0.5"
-    >
-      <span className="material-symbols-outlined">list</span>
-      View All Forms
-    </button>
-    <button
-      onClick={() => navigate("/responses")}
-      className="flex items-center gap-2 px-6 py-3 bg-white text-slate-700 border border-slate-200 rounded-2xl font-semibold cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md hover:transform hover:-translate-y-0.5"
-    >
-      <span className="material-symbols-outlined">assignment</span>
-      View Responses
-    </button>
-  </div>
-  <div className="w-full sm:w-auto">
-    <button
-      onClick={() => navigate("/builder")}
-      className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white border-0 rounded-2xl font-semibold cursor-pointer transition-all duration-200 shadow-lg shadow-purple-500/30 hover:transform hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-500/40 w-full sm:w-auto"
+      className="flex items-center gap-2 px-6 py-3 bg-white text-slate-700 border border-slate-200   rounded-xl font-semibold cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5"
+      >
+        <span className="material-symbols-outlined">list</span>
+        View All Forms
+      </button>
+      <button
+        onClick={() => navigate("/responses")}
+        className="flex items-center gap-2 px-6 py-3 bg-white text-slate-700 border border-slate-200 rounded-xl font-semibold cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5"
+      >
+        <span className="material-symbols-outlined">assignment</span>
+        View Responses
+      </button>
+    </div>
+    <div className="w-full sm:w-auto">
+      <button
+        onClick={() => navigate("/builder")}
+        className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-violet-600 to-purple-600 text-white border-0 rounded-xl font-semibold cursor-pointer transition-all duration-200 shadow-lg shadow-violet-500/25 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-violet-500/30 w-full sm:w-auto"
     >
       <span className="material-symbols-outlined">add</span>
       Create New Form
@@ -143,73 +143,73 @@ const Dashboard = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
-          <div className="bg-white rounded-2xl p-6 shadow-lg border border-purple-100">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-slate-600 text-sm font-medium">
-                  Total Forms
+          <div className="bg-white rounded-2xl p-6           shadow-md border border-slate-100 hover:shadow-lg transition-shadow duration-200">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-slate-600 text-sm font-medium">
+                            Total Forms
                 </p>
                 <p className="text-3xl font-bold text-slate-800">
                   {dashboardData.totalForms}
                 </p>
               </div>
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-100 to-purple-200 rounded-xl flex items-center justify-center">
-                <span className="material-symbols-outlined text-purple-600 text-xl">
-                  description
+              <div className="w-12 h-12               bg-violet-100 rounded-xl flex items-center justify-center">
+                              <span className="material-symbols-outlined text-violet-600 text-xl">
+                                description
                 </span>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl p-6 shadow-lg border border-blue-100">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-slate-600 text-sm font-medium">
-                  Total Responses
+          <div className="bg-white rounded-2xl p-6           shadow-md border border-slate-100 hover:shadow-lg transition-shadow duration-200">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-slate-600 text-sm font-medium">
+                            Total Responses
                 </p>
                 <p className="text-3xl font-bold text-slate-800">
                   {dashboardData.totalResponses}
                 </p>
               </div>
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl flex items-center justify-center">
-                <span className="material-symbols-outlined text-blue-600 text-xl">
-                  assignment
+              <div className="w-12 h-12               bg-blue-100 rounded-xl flex items-center justify-center">
+                              <span className="material-symbols-outlined text-blue-600 text-xl">
+                                assignment
                 </span>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl p-6 shadow-lg border border-green-100">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-slate-600 text-sm font-medium">
-                  Total Fields
+          <div className="bg-white rounded-2xl p-6           shadow-md border border-slate-100 hover:shadow-lg transition-shadow duration-200">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-slate-600 text-sm font-medium">
+                            Total Fields
                 </p>
                 <p className="text-3xl font-bold text-slate-800">
                   {dashboardData.totalFields}
                 </p>
               </div>
-              <div className="w-12 h-12 bg-gradient-to-br from-green-100 to-green-200 rounded-xl flex items-center justify-center">
-                <span className="material-symbols-outlined text-green-600 text-xl">
-                  format_list_bulleted
+              <div className="w-12 h-12               bg-green-100 rounded-xl flex items-center justify-center">
+                              <span className="material-symbols-outlined text-green-600 text-xl">
+                                format_list_bulleted
                 </span>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl p-6 shadow-lg border border-orange-100">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-slate-600 text-sm font-medium">
-                  Avg Fields/Form
+          <div className="bg-white rounded-2xl p-6           shadow-md border border-slate-100 hover:shadow-lg transition-shadow duration-200">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-slate-600 text-sm font-medium">
+                            Avg Fields/Form
                 </p>
                 <p className="text-3xl font-bold text-slate-800">
                   {dashboardData.averageFieldsPerForm}
                 </p>
               </div>
-              <div className="w-12 h-12 bg-gradient-to-br from-orange-100 to-orange-200 rounded-xl flex items-center justify-center">
-                <span className="material-symbols-outlined text-orange-600 text-xl">
-                  analytics
+              <div className="w-12 h-12               bg-orange-100 rounded-xl flex items-center justify-center">
+                              <span className="material-symbols-outlined text-orange-600 text-xl">
+                                analytics
                 </span>
               </div>
             </div>
@@ -218,9 +218,9 @@ const Dashboard = () => {
 
         {/* Most Active Form */}
         {dashboardData.mostActiveForm && (
-          <div className="bg-white rounded-2xl p-6 shadow-lg border border-yellow-100 mb-8">
+          <div className="bg-white rounded-2xl p-6 shadow-md border border-slate-100 mb-8">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-gradient-to-br from-yellow-100 to-yellow-200 rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center">
                 <span className="material-symbols-outlined text-yellow-600">
                   trending_up
                 </span>
@@ -253,10 +253,10 @@ const Dashboard = () => {
         {/* Recent Activity */}
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
           {/* Recent Forms */}
-          <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-gradient-to-br from-purple-100 to-purple-200 rounded-xl flex items-center justify-center">
-                <span className="material-symbols-outlined text-purple-600">
+          <div className="bg-white rounded-2xl p-6           shadow-md border border-slate-100">
+                      <div className="flex items-center gap-3 mb-6">
+                        <div className="w-10 h-10 bg-violet-100 rounded-xl flex items-center justify-center">
+                          <span className="material-symbols-outlined text-violet-600">
                   description
                 </span>
               </div>
@@ -284,7 +284,7 @@ const Dashboard = () => {
                     </div>
                     <button
                       onClick={() => navigate(`/form/${form.formId}`)}
-                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      className="p-2 text-violet-600 hover:bg-violet-50 rounded-lg transition-colors duration-200"
                     >
                       <span className="material-symbols-outlined">
                         visibility
@@ -297,11 +297,11 @@ const Dashboard = () => {
           </div>
 
           {/* Recent Responses */}
-          <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl flex items-center justify-center">
-                <span className="material-symbols-outlined text-blue-600">
-                  assignment
+          <div className="bg-white rounded-2xl p-6           shadow-md border border-slate-100">
+                      <div className="flex items-center gap-3 mb-6">
+                        <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                          <span className="material-symbols-outlined text-blue-600">
+                            assignment
                 </span>
               </div>
               <h3 className="text-xl font-bold text-slate-800">
@@ -341,7 +341,7 @@ const Dashboard = () => {
         </div>
 
         {/* Quick Actions */}
-        <div className="mt-8 bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl p-4 sm:p-8 border border-purple-100">
+        <div className="mt-8 bg-gradient-to-r from-violet-50 to-purple-50 rounded-2xl p-4 sm:p-8 border border-violet-100">
           <div className="text-center">
             <h3 className="text-2xl font-bold text-slate-800 mb-4">
               Ready to create something amazing?
@@ -352,21 +352,21 @@ const Dashboard = () => {
             <div className="flex flex-col gap-3 sm:flex-row sm:gap-4 justify-center items-stretch">
               <button
                 onClick={() => navigate("/builder")}
-                className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white border-0 rounded-2xl font-semibold cursor-pointer transition-all duration-200 shadow-lg shadow-purple-500/30 hover:transform hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-500/40"
-              >
-                <span className="material-symbols-outlined mr-2">add</span>
-                Create New Form
-              </button>
-              <button
-                onClick={() => navigate("/forms")}
-                className="px-8 py-4 bg-white text-slate-700 border border-slate-200 rounded-2xl font-semibold cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md hover:transform hover:-translate-y-0.5"
-              >
-                <span className="material-symbols-outlined mr-2">list</span>
-                Manage Forms
-              </button>
-              <button
-                onClick={() => navigate("/responses")}
-                className="px-8 py-4 bg-white text-slate-700 border border-slate-200 rounded-2xl font-semibold cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md hover:transform hover:-translate-y-0.5"
+                className="              px-8 py-4 bg-gradient-to-r from-violet-600 to-purple-600 text-white border-0 rounded-xl font-semibold cursor-pointer transition-all duration-200 shadow-lg shadow-violet-500/25 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-violet-500/30"
+                            >
+                              <span className="material-symbols-outlined mr-2">add</span>
+                              Create New Form
+                            </button>
+                            <button
+                              onClick={() => navigate("/forms")}
+                              className="px-8 py-4 bg-white text-slate-700 border border-slate-200 rounded-xl font-semibold cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5"
+                            >
+                              <span className="material-symbols-outlined mr-2">list</span>
+                              Manage Forms
+                            </button>
+                            <button
+                              onClick={() => navigate("/responses")}
+                              className="px-8 py-4 bg-white text-slate-700 border border-slate-200 rounded-xl font-semibold cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5"
               >
                 <span className="material-symbols-outlined mr-2">
                   assignment

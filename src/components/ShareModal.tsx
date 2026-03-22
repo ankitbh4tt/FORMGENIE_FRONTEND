@@ -62,9 +62,9 @@ const ShareModal = ({
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-slate-200">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-100 to-purple-200 rounded-xl flex items-center justify-center">
-              <span className="material-symbols-outlined text-purple-600">
-                share
+            <div className="w-10 h-10 bg-violet-100 rounded-xl flex items-center justify-center">
+              <span className="material-symbols-outlined               text-violet-600">
+                              share
               </span>
             </div>
             <div>
@@ -114,7 +114,7 @@ const ShareModal = ({
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
                   copied
                     ? "bg-green-100 text-green-700 border border-green-200"
-                    : "bg-purple-100 text-purple-700 border border-purple-200 hover:bg-purple-200"
+                    : "bg-violet-100 text-violet-700 border border-violet-200 hover:bg-violet-200"
                 }`}
               >
                 <span className="material-symbols-outlined text-sm">
@@ -153,7 +153,7 @@ const ShareModal = ({
           </button>
           <button
             onClick={handleCopyLink}
-            className="px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-lg shadow-purple-500/30"
+            className="px-6 py-2 bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-xl font-medium transition-all duration-200 shadow-lg shadow-violet-500/25 hover:shadow-xl"
           >
             Copy Link
           </button>

@@ -6,25 +6,37 @@ interface TestimonialCardProps {
   quote: string;
   rating: number;
   initials: string;
-  color: string;
+  color: 'blue' | 'green' | 'purple';
 }
 
-export const TestimonialCard: React.FC<TestimonialCardProps> = ({ name, title, quote, rating, initials, color }) => (
-  <div className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 border border-gray-100">
-    <div className="flex items-center mb-4">
-      <div className={`w-12 h-12 rounded-full bg-${color}-100 flex items-center justify-center text-${color}-600 font-semibold`}>
-        {initials}
+const colorMap = {
+  blue: { bg: 'bg-blue-100', text: 'text-blue-600' },
+  green: { bg: 'bg-emerald-100', text: 'text-emerald-600' },
+  purple: { bg: 'bg-violet-100', text: 'text-violet-600' },
+} as const;
+
+export const TestimonialCard: React.FC<TestimonialCardProps> = ({ name, title, quote, rating, initials, color }) => {
+  const colors = colorMap[color];
+
+  return (
+    <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5 border border-slate-100">
+      <div className="flex items-center mb-4">
+        <div className={`w-12 h-12 rounded-full ${colors.bg} flex items-center justify-center ${colors.text} font-semibold`}>
+          {initials}
+        </div>
+        <div className="ml-4">
+          <h4 className="font-semibold text-slate-800">{name}</h4>
+          <p className="text-slate-500 text-sm">{title}</p>
+        </div>
       </div>
-      <div className="ml-4">
-        <h4 className="font-semibold text-gray-900">{name}</h4>
-        <p className="text-gray-500 text-sm">{title}</p>
+      <p className="text-slate-600 mb-4 leading-relaxed">{quote}</p>
+      <div className="flex text-amber-400">
+        {Array.from({ length: 5 }, (_, i) => (
+          <span key={i} className="material-symbols-outlined text-lg">
+            {i < Math.floor(rating) ? 'star' : i + 0.5 === rating ? 'star_half' : 'star_outline'}
+          </span>
+        ))}
       </div>
     </div>
-    <p className="text-gray-600 mb-4">{quote}</p>
-    <div className="flex text-yellow-400">
-      {Array.from({ length: 5 }, (_, i) => (
-        <span key={i} className="material-symbols-outlined">{i < rating ? 'star' : i + 0.5 === rating ? 'star_half' : 'star'}</span>
-      ))}
-    </div>
-  </div>
-);
+  );
+};

@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from 'react';
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
@@ -117,33 +115,33 @@ const FormView = (): React.ReactElement => {
             type={field.type}
             value={value}
             onChange={(e) => handleInputChange(field.label, e.target.value)}
-            className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl text-sm transition-all duration-200 focus:outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-100"
-            placeholder={`Enter ${field.label.toLowerCase()}`}
-            required={field.required}
-          />
-        );
+            className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl text-sm transition-all duration-200 focus:outline-none       focus:border-violet-500 focus:ring-4 focus:ring-violet-100"
+                  placeholder={`Enter ${field.label.toLowerCase()}`}
+                  required={field.required}
+                />
+              );
 
-      case "date":
-        return (
-          <input
-            key={index}
-            id={fieldId}
-            type="date"
-            value={value}
-            onChange={(e) => handleInputChange(field.label, e.target.value)}
-            className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl text-sm transition-all duration-200 bg-white focus:outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-100"
-            required={field.required}
-          />
-        );
+            case "date":
+              return (
+                <input
+                  key={index}
+                  id={fieldId}
+                  type="date"
+                  value={value}
+                  onChange={(e) => handleInputChange(field.label, e.target.value)}
+                  className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl text-sm transition-all duration-200 bg-white focus:outline-none focus:border-violet-500 focus:ring-4 focus:ring-violet-100"
+                  required={field.required}
+                />
+              );
 
-      case "select":
-        return (
-          <select
-            key={index}
-            id={fieldId}
-            value={value}
-            onChange={(e) => handleInputChange(field.label, e.target.value)}
-            className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl text-sm transition-all duration-200 bg-white focus:outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-100"
+            case "select":
+              return (
+                <select
+                  key={index}
+                  id={fieldId}
+                  value={value}
+                  onChange={(e) => handleInputChange(field.label, e.target.value)}
+                  className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl text-sm transition-all duration-200 bg-white focus:outline-none focus:border-violet-500 focus:ring-4 focus:ring-violet-100"
             required={field.required}
           >
             <option value="">Choose an option</option>
@@ -163,36 +161,36 @@ const FormView = (): React.ReactElement => {
               type="checkbox"
               checked={value}
               onChange={(e) => handleInputChange(field.label, e.target.checked)}
-              className="w-5 h-5 accent-purple-600 cursor-pointer"
+              className="w-5 h-5 accent-violet-600 cursor-pointer"
             />
             <label
               htmlFor={fieldId}
-              className="text-sm text-gray-700 cursor-pointer select-none font-semibold"
-            >
-              {field.label}
-              {field.required && (
-                <span className="text-red-500 font-medium ml-1">*</span>
-              )}
-            </label>
-          </div>
-        );
+              className="text-sm       text-slate-700 cursor-pointer select-none font-semibold"
+                  >
+                    {field.label}
+                    {field.required && (
+                      <span className="text-red-500 font-medium ml-1">*</span>
+                    )}
+                  </label>
+                </div>
+              );
 
-      case "file":
-        return (
-          <div key={index} className="relative">
-            <input
-              id={fieldId}
-              type="file"
-              onChange={(e) => {
-                const files = e.target.files;
-                handleInputChange(field.label, files && files[0] ? files[0].name : "");
-              }}
-              className="absolute opacity-0 w-full h-full cursor-pointer"
-              required={field.required}
-            />
-            <label
-              htmlFor={fieldId}
-              className="flex flex-col items-center justify-center py-8 px-4 border-2 border-dashed border-slate-300 rounded-xl bg-slate-50 cursor-pointer transition-all duration-200 gap-2 hover:border-purple-500 hover:bg-purple-50"
+            case "file":
+              return (
+                <div key={index} className="relative">
+                  <input
+                    id={fieldId}
+                    type="file"
+                    onChange={(e) => {
+                      const files = e.target.files;
+                      handleInputChange(field.label, files && files[0] ? files[0].name : "");
+                    }}
+                    className="absolute opacity-0 w-full h-full cursor-pointer"
+                    required={field.required}
+                  />
+                  <label
+                    htmlFor={fieldId}
+                    className="flex flex-col items-center justify-center py-8 px-4 border-2 border-dashed border-slate-300 rounded-xl bg-slate-50 cursor-pointer transition-all duration-200 gap-2 hover:border-violet-500 hover:bg-violet-50"
             >
               <span className="material-symbols-outlined text-2xl text-slate-400">
                 cloud_upload
@@ -212,19 +210,19 @@ const FormView = (): React.ReactElement => {
             rows={4}
             value={value}
             onChange={(e) => handleInputChange(field.label, e.target.value)}
-            className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl text-sm resize-vertical transition-all duration-200 focus:outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-100"
-            placeholder={`Enter ${field.label.toLowerCase()}`}
-            required={field.required}
-          />
-        );
-    }
-  };
+            className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl text-sm resize-vertical transition-all duration-200 focus:outline-none   focus:border-violet-500 focus:ring-4 focus:ring-violet-100"
+              placeholder={`Enter ${field.label.toLowerCase()}`}
+              required={field.required}
+            />
+          );
+      }
+    };
 
-  if (loading) {
+    if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen text-center py-8 text-slate-600">
         <div className="relative w-15 h-15 mb-4">
-          <div className="absolute w-full h-full border-3 border-transparent border-t-purple-600 rounded-full animate-spin"></div>
+          <div className="absolute w-full h-full border-3 border-transparent border-t-violet-600 rounded-full animate-spin"></div>
         </div>
         <p>Loading form...</p>
       </div>
@@ -259,7 +257,7 @@ const FormView = (): React.ReactElement => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-8 px-4">
-      <div className="max-w-2xl mx-auto bg-white rounded-3xl shadow-2xl border border-purple-100 overflow-hidden">
+      <div className="max-w-2xl mx-auto bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden">
         <div className="p-8 bg-gradient-to-r from-white to-slate-50 border-b border-slate-100 text-center">
           <h1 className="text-3xl font-bold text-slate-800 mb-2">
             {form?.title}
@@ -281,7 +279,7 @@ const FormView = (): React.ReactElement => {
               {field.type !== "checkbox" && (
                 <label
                   htmlFor={`field-${index}`}
-                  className="text-sm font-semibold text-gray-700 flex items-center gap-1"
+                  className="text-sm font-semibold text-slate-700 flex items-center gap-1"
                 >
                   {field.label}
                   {field.required && (
@@ -297,7 +295,7 @@ const FormView = (): React.ReactElement => {
             <LoadingButton
               type="submit"
               loading={submitting}
-              className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white border-0 rounded-2xl text-base font-semibold cursor-pointer transition-all duration-200 shadow-lg shadow-purple-500/30 hover:transform hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-500/40 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-violet-600 to-purple-600 text-white border-0 rounded-xl text-base font-semibold cursor-pointer transition-all duration-200 shadow-lg shadow-violet-500/25 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-violet-500/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
               onClick={() => {}}
             >
               <span className="material-symbols-outlined">send</span>

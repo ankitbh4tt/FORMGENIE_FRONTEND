@@ -1,141 +1,122 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Logo } from "../common/Logo";
 import { UserButton } from "@clerk/clerk-react";
 import { useNavigate, useLocation } from "react-router-dom";
-
-// Enhanced NavLink with active state detection
-const NavLink = ({
-  href,
-  children,
-  onClick,
-  className,
-  isActive,
-}: {
-  href: string;
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  isActive?: boolean;
-}) => (
-  <a
-    href={href}
-    onClick={onClick}
-    className={`transition-colors ${
-      isActive
-        ? "text-purple-600 font-semibold"
-        : "text-gray-700 hover:text-purple-600"
-    } ${className}`}
-  >
-    {children}
-  </a>
-);
 
 export const AppHeader: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const menuRef = useRef<HTMLDivElement>(null);
 
-  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
-
-  // Helper function to check if a path is active
   const isActivePath = (path: string) => {
-    if (path === "/dashboard") {
-      return location.pathname === "/dashboard";
-    }
+    if (path === "/dashboard") return location.pathname === "/dashboard";
     return location.pathname.startsWith(path);
   };
 
+  const handleNav = (path: string) => {
+    navigate(path);
+    setIsMobileMenuOpen(false);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+    if (isMobileMenuOpen) document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isMobileMenuOpen]);
+
+  const navLinkClass = (path: string) =>
+    `text-sm font-medium transition-colors duration-200 cursor-pointer ${
+      isActivePath(path)
+        ? "text-violet-600"
+        : "text-slate-600 hover:text-violet-600"
+    }`;
+
   return (
-    <header className="fixed top-0 left-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-white/10">
-      <div className="container mx-auto px-4 py-3 flex justify-between items-center relative">
-        {/* Logo */}
+    <header className="fixed top-0 left-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-slate-200/60">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex justify-between items-center relative">
         <div
           className="flex items-center space-x-2 cursor-pointer"
-          onClick={() => navigate("/dashboard")}
+          onClick={() => handleNav("/dashboard")}
         >
-          {/* <Logo /> */}
-          <div className="w-10 h-10">
-            <img src="./favicon.png" alt="FormGenie" />
-          </div>
-          <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-600 to-purple-600">
+          <Logo />
+          <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-600 to-purple-600">
             FormGenie
           </span>
         </div>
 
-        {/* Desktop Nav */}
         <nav className="hidden md:flex items-center space-x-6">
-          <NavLink href="/dashboard" isActive={isActivePath("/dashboard")}>
+          <button onClick={() => handleNav("/dashboard")} className={navLinkClass("/dashboard")}>
             Dashboard
-          </NavLink>
-          <NavLink href="/forms" isActive={isActivePath("/forms")}>
+          </button>
+          <button onClick={() => handleNav("/forms")} className={navLinkClass("/forms")}>
             My Forms
-          </NavLink>
-          <NavLink href="/responses" isActive={isActivePath("/responses")}>
+          </button>
+          <button onClick={() => handleNav("/responses")} className={navLinkClass("/responses")}>
             Responses
-          </NavLink>
+          </button>
 
-          {/* CTA Button */}
           <button
-            onClick={() => navigate("/builder")}
-            className="px-5 py-2 rounded-full bg-gradient-to-r from-fuchsia-500 to-purple-600 text-white font-medium shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
+            onClick={() => handleNav("/builder")}
+            className="px-4 py-2 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 text-white text-sm font-medium shadow-sm hover:shadow-md transition-all duration-200 transform hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2"
           >
             + New Form
           </button>
 
-          {/* User Avatar */}
           <UserButton afterSignOutUrl="/" />
         </nav>
 
-        {/* Mobile Nav Toggle */}
-        <div className="md:hidden flex items-center space-x-2">
+        <div className="md:hidden flex items-center space-x-2" ref={menuRef}>
           <UserButton afterSignOutUrl="/" />
           <button
-            onClick={toggleMobileMenu}
-            className="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-gray-700 hover:bg-white/20 transition-colors duration-300"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="w-10 h-10 flex items-center justify-center rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors duration-200"
           >
-            <span className="material-symbols-outlined">menu</span>
+            <span className="material-symbols-outlined">
+              {isMobileMenuOpen ? "close" : "menu"}
+            </span>
           </button>
-        </div>
 
-        {/* Mobile Menu Popover */}
-        {isMobileMenuOpen && (
-          <div className="absolute right-4 top-full mt-2 w-48 rounded-lg bg-white shadow-xl border border-gray-200 py-2 z-50 flex flex-col space-y-2">
-            <NavLink
-              href="/dashboard"
-              className="px-4 py-2 font-medium text-gray-800 hover:bg-gray-100"
-              isActive={isActivePath("/dashboard")}
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Dashboard
-            </NavLink>
-            <NavLink
-              href="/forms"
-              className="px-4 py-2 font-medium text-gray-800 hover:bg-gray-100"
-              isActive={isActivePath("/forms")}
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              My Forms
-            </NavLink>
-            <NavLink
-              href="/responses"
-              className="px-4 py-2 font-medium text-gray-800 hover:bg-gray-100"
-              isActive={isActivePath("/responses")}
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Responses
-            </NavLink>
-            <hr className="my-1 border-gray-100" />
-            <button
-              onClick={() => {
-                navigate("/builder");
-                setIsMobileMenuOpen(false);
-              }}
-              className="block w-full text-left font-medium px-4 py-2 text-purple-600 hover:bg-gray-100 transition-colors"
-            >
-              + New Form
-            </button>
-          </div>
-        )}
+          {isMobileMenuOpen && (
+            <div className="absolute right-4 top-full mt-2 w-48 rounded-xl bg-white shadow-lg border border-slate-200 py-2 z-50 flex flex-col">
+              <button
+                onClick={() => handleNav("/dashboard")}
+                className={`px-4 py-2.5 text-left text-sm font-medium transition-colors duration-200 ${
+                  isActivePath("/dashboard") ? "text-violet-600 bg-violet-50" : "text-slate-700 hover:bg-slate-50"
+                }`}
+              >
+                Dashboard
+              </button>
+              <button
+                onClick={() => handleNav("/forms")}
+                className={`px-4 py-2.5 text-left text-sm font-medium transition-colors duration-200 ${
+                  isActivePath("/forms") ? "text-violet-600 bg-violet-50" : "text-slate-700 hover:bg-slate-50"
+                }`}
+              >
+                My Forms
+              </button>
+              <button
+                onClick={() => handleNav("/responses")}
+                className={`px-4 py-2.5 text-left text-sm font-medium transition-colors duration-200 ${
+                  isActivePath("/responses") ? "text-violet-600 bg-violet-50" : "text-slate-700 hover:bg-slate-50"
+                }`}
+              >
+                Responses
+              </button>
+              <hr className="my-1 border-slate-100" />
+              <button
+                onClick={() => handleNav("/builder")}
+                className="px-4 py-2.5 text-left text-sm font-medium text-violet-600 hover:bg-violet-50 transition-colors duration-200"
+              >
+                + New Form
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </header>
   );

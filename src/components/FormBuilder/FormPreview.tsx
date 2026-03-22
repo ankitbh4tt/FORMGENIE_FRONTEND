@@ -22,7 +22,7 @@ const FormPreview = ({ schema }: FormPreviewProps) => {
             key={index}
             id={fieldId}
             type={field.type}
-            className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl text-sm transition-all duration-200 focus:outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-100"
+            className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl text-sm transition-all duration-200 focus:outline-none focus:border-violet-500 focus:ring-4 focus:ring-violet-100"
             placeholder={`Enter ${field.label.toLowerCase()}`}
           />
         );
@@ -33,7 +33,7 @@ const FormPreview = ({ schema }: FormPreviewProps) => {
             key={index}
             id={fieldId}
             type="date"
-            className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl text-sm transition-all duration-200 focus:outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-100"
+            className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl text-sm transition-all duration-200 focus:outline-none focus:border-violet-500 focus:ring-4 focus:ring-violet-100"
           />
         );
 
@@ -42,7 +42,7 @@ const FormPreview = ({ schema }: FormPreviewProps) => {
           <select
             key={index}
             id={fieldId}
-            className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl text-sm transition-all duration-200 bg-white focus:outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-100"
+            className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl text-sm transition-all duration-200 bg-white focus:outline-none focus:border-violet-500 focus:ring-4 focus:ring-violet-100"
           >
             <option value="">Choose an option</option>
             {field.options?.map((option: string, optIndex: number) => (
@@ -59,11 +59,11 @@ const FormPreview = ({ schema }: FormPreviewProps) => {
             <input
               id={fieldId}
               type="checkbox"
-              className="w-5 h-5 accent-purple-600 cursor-pointer"
+              className="w-5 h-5 accent-violet-600 cursor-pointer"
             />
             <label
               htmlFor={fieldId}
-              className="text-sm text-gray-700 cursor-pointer select-none font-semibold"
+              className="text-sm text-slate-700 cursor-pointer select-none font-semibold"
             >
               {field.label}
             </label>
@@ -80,7 +80,7 @@ const FormPreview = ({ schema }: FormPreviewProps) => {
             />
             <label
               htmlFor={fieldId}
-              className="flex flex-col items-center justify-center py-8 px-4 border-2 border-dashed border-slate-300 rounded-xl bg-slate-50 cursor-pointer transition-all duration-200 gap-2 hover:border-purple-500 hover:bg-purple-50"
+              className="flex flex-col items-center justify-center py-8 px-4 border-2 border-dashed border-slate-300 rounded-xl bg-slate-50 cursor-pointer transition-all duration-200 gap-2 hover:border-violet-500 hover:bg-violet-50"
             >
               <span className="material-symbols-outlined text-2xl text-slate-400">
                 cloud_upload
@@ -98,7 +98,7 @@ const FormPreview = ({ schema }: FormPreviewProps) => {
             key={index}
             id={fieldId}
             rows={4}
-            className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl text-sm resize-vertical transition-all duration-200 focus:outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-100"
+            className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl text-sm resize-vertical transition-all duration-200 focus:outline-none focus:border-violet-500 focus:ring-4 focus:ring-violet-100"
             placeholder={`Enter ${field.label.toLowerCase()}`}
           />
         );
@@ -117,7 +117,7 @@ const FormPreview = ({ schema }: FormPreviewProps) => {
             {field.type !== "checkbox" && (
               <label
                 htmlFor={`field-${index}`}
-                className="text-sm font-semibold text-gray-700 flex items-center gap-1"
+                className="text-sm font-semibold text-slate-700 flex items-center gap-1"
               >
                 {field.label}
                 {field.required && (

@@ -15,7 +15,7 @@ const MessageBubble = ({ message }: MessageBubbleProps) => {
     return (
       <div className="flex items-center my-6 gap-4 animate-in fade-in duration-300">
         <div className="flex-1 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent"></div>
-        <span className="text-xs text-purple-600 font-medium px-3 py-1 bg-slate-50 border border-slate-200 rounded-xl">
+        <span className="text-xs text-violet-600 font-medium px-3 py-1 bg-slate-50 border border-slate-200 rounded-xl">
           {message.content}
         </span>
         <div className="flex-1 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent"></div>
@@ -35,7 +35,7 @@ const MessageBubble = ({ message }: MessageBubbleProps) => {
             ? message.isError
               ? "bg-red-50 text-red-600 border border-red-200"
               : "bg-slate-50 text-slate-800 rounded-bl-md border border-slate-200"
-            : "bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-br-md shadow-lg shadow-purple-500/30"
+            : "bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-br-md shadow-lg shadow-violet-500/25"
         }`}
       >
         {message.content}

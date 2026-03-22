@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from 'react';
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
@@ -174,7 +172,7 @@ const FormBuilder = (): React.ReactElement => {
             onClick={() => setActiveView('chat')}
             className={`flex-1 py-4 px-6 font-semibold text-sm transition-all duration-200 border-b-2 ${
               activeView === 'chat'
-                ? 'border-purple-600 text-purple-600 bg-purple-50'
+                ? 'border-violet-600 text-violet-600 bg-violet-50'
                 : 'border-transparent text-slate-600 hover:bg-slate-50'
             }`}
           >
@@ -185,12 +183,12 @@ const FormBuilder = (): React.ReactElement => {
             onClick={() => setActiveView('preview')}
             className={`flex-1 py-4 px-6 font-semibold text-sm transition-all duration-200 border-b-2 relative ${
               activeView === 'preview'
-                ? 'border-purple-600 text-purple-600 bg-purple-50'
-                : 'border-transparent text-slate-600 hover:bg-slate-50'
-            }`}
-          >
-            <span className="material-symbols-outlined text-base mr-2 align-middle">visibility</span>
-            Preview
+                ? '          border-violet-600 text-violet-600 bg-violet-50'
+                          : 'border-transparent text-slate-600 hover:bg-slate-50'
+                      }`}
+                    >
+                      <span className="material-symbols-outlined text-base mr-2 align-middle">visibility</span>
+                      Preview
             {formSchema.length > 0 && (
               <span className="absolute top-2 right-2 w-2 h-2 bg-green-500 rounded-full"></span>
             )}
