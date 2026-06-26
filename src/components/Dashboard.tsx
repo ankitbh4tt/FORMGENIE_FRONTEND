@@ -1,6 +1,23 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import {
+  FileText,
+  Inbox,
+  ListChecks,
+  Gauge,
+  Plus,
+  ArrowUpRight,
+  TrendingUp,
+  Check,
+  AlertCircle,
+  type LucideIcon,
+} from "lucide-react";
 import { useApi } from "../../services/api";
+import { Button } from "./ui/button";
+import { CenteredSpinner } from "./ui/spinner";
+import { EmptyState } from "./ui/empty-state";
+import { ActivityChart } from "./dashboard/ActivityChart";
 
 interface DashboardData {
   totalForms: number;
@@ -29,28 +46,55 @@ interface DashboardData {
   totalFields: number;
 }
 
+const EASE = [0.2, 0, 0, 1] as const;
+
+function StatCard({
+  icon: Icon,
+  label,
+  value,
+  index,
+}: {
+  icon: LucideIcon;
+  label: string;
+  value: number | string;
+  index: number;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: EASE, delay: index * 0.05 }}
+      className="rounded-xl border border-border bg-surface p-5 shadow-xs"
+    >
+      <div className="flex items-center justify-between">
+        <span className="text-[13px] font-medium text-ink-muted">{label}</span>
+        <Icon className="size-4 text-ink-faint" strokeWidth={1.75} />
+      </div>
+      <p className="mt-3 font-display text-[2rem] font-medium leading-none tracking-tight text-ink">
+        {value}
+      </p>
+    </motion.div>
+  );
+}
+
 const Dashboard = () => {
   const navigate = useNavigate();
   const { getDashboardStats } = useApi();
-  const [dashboardData, setDashboardData] = useState<DashboardData | null>(
-    null
-  );
+  const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     loadDashboardData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadDashboardData = async () => {
     try {
       setLoading(true);
       const response = await getDashboardStats();
-      if (response.success && response.data) {
-        setDashboardData(response.data);
-      } else {
-        setError(response.error || "Failed to load dashboard data");
-      }
+      if (response.success && response.data) setData(response.data);
+      else setError(response.error || "Failed to load dashboard data");
     } catch (err) {
       setError("Failed to load dashboard data");
       console.error("Error loading dashboard data:", err);
@@ -59,326 +103,215 @@ const Dashboard = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen gap-4 text-slate-600">
-        <div className="relative w-15 h-15">
-          <div className="absolute w-full h-full border-3 border-transparent border-t-violet-600 rounded-full animate-spin"></div>
-        </div>
-        <p>Loading your dashboard...</p>
-      </div>
-    );
-  }
+  if (loading) return <CenteredSpinner label="Loading your dashboard…" />;
 
-  if (error) {
+  if (error || !data) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-8 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center gap-2 p-4 bg-red-50 text-red-600 border border-red-200 rounded-xl">
-            <span className="material-symbols-outlined">error</span>
-            {error}
-          </div>
+      <div className="mx-auto max-w-2xl px-5 py-16">
+        <div className="flex items-center gap-2.5 rounded-xl border border-danger/30 bg-danger-soft px-4 py-3 text-sm text-danger">
+          <AlertCircle className="size-4 shrink-0" />
+          {error || "No dashboard data available."}
         </div>
       </div>
     );
   }
 
-  if (!dashboardData) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-8 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center py-16 text-slate-600">
-            <h3 className="text-2xl font-semibold mb-2 text-slate-700">
-              No Data Available
-            </h3>
-            <p className="text-base mb-8">Unable to load dashboard data</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const hasActivity =
+    data.responsesByMonth.length > 0 || data.formsByMonth.length > 0;
+  const isEmpty = data.totalForms === 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-8 px-4">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4">
-          <div className="flex-1">
-            <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">
-              Dashboard
-            </h1>
-            <p className="text-slate-600 text-lg">
-              Overview of your AI form builder activity
-            </p>
-          </div>
-
-          <div className="w-full flex flex-col gap-2 sm:flex-row sm:gap-3 sm:w-auto max-w-full overflow-x-auto">
-  <div className="flex flex-row gap-2 sm:gap-3 w-full sm:w-auto">
-    <button
-      onClick={() => navigate("/forms")}
-      className="flex items-center gap-2 px-6 py-3 bg-white text-slate-700 border border-slate-200   rounded-xl font-semibold cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5"
-      >
-        <span className="material-symbols-outlined">list</span>
-        View All Forms
-      </button>
-      <button
-        onClick={() => navigate("/responses")}
-        className="flex items-center gap-2 px-6 py-3 bg-white text-slate-700 border border-slate-200 rounded-xl font-semibold cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5"
-      >
-        <span className="material-symbols-outlined">assignment</span>
-        View Responses
-      </button>
-    </div>
-    <div className="w-full sm:w-auto">
-      <button
-        onClick={() => navigate("/builder")}
-        className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-violet-600 to-purple-600 text-white border-0 rounded-xl font-semibold cursor-pointer transition-all duration-200 shadow-lg shadow-violet-500/25 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-violet-500/30 w-full sm:w-auto"
-    >
-      <span className="material-symbols-outlined">add</span>
-      Create New Form
-    </button>
-  </div>
-</div>
+    <div className="mx-auto max-w-6xl px-5 py-8 sm:px-8">
+      {/* header */}
+      <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 className="font-display text-3xl font-medium tracking-tight text-ink">
+            Welcome back
+          </h1>
+          <p className="mt-1 text-ink-muted">
+            Here's what's happening across your forms.
+          </p>
         </div>
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
-          <div className="bg-white rounded-2xl p-6           shadow-md border border-slate-100 hover:shadow-lg transition-shadow duration-200">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-slate-600 text-sm font-medium">
-                            Total Forms
-                </p>
-                <p className="text-3xl font-bold text-slate-800">
-                  {dashboardData.totalForms}
-                </p>
-              </div>
-              <div className="w-12 h-12               bg-violet-100 rounded-xl flex items-center justify-center">
-                              <span className="material-symbols-outlined text-violet-600 text-xl">
-                                description
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-2xl p-6           shadow-md border border-slate-100 hover:shadow-lg transition-shadow duration-200">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-slate-600 text-sm font-medium">
-                            Total Responses
-                </p>
-                <p className="text-3xl font-bold text-slate-800">
-                  {dashboardData.totalResponses}
-                </p>
-              </div>
-              <div className="w-12 h-12               bg-blue-100 rounded-xl flex items-center justify-center">
-                              <span className="material-symbols-outlined text-blue-600 text-xl">
-                                assignment
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-2xl p-6           shadow-md border border-slate-100 hover:shadow-lg transition-shadow duration-200">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-slate-600 text-sm font-medium">
-                            Total Fields
-                </p>
-                <p className="text-3xl font-bold text-slate-800">
-                  {dashboardData.totalFields}
-                </p>
-              </div>
-              <div className="w-12 h-12               bg-green-100 rounded-xl flex items-center justify-center">
-                              <span className="material-symbols-outlined text-green-600 text-xl">
-                                format_list_bulleted
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-2xl p-6           shadow-md border border-slate-100 hover:shadow-lg transition-shadow duration-200">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-slate-600 text-sm font-medium">
-                            Avg Fields/Form
-                </p>
-                <p className="text-3xl font-bold text-slate-800">
-                  {dashboardData.averageFieldsPerForm}
-                </p>
-              </div>
-              <div className="w-12 h-12               bg-orange-100 rounded-xl flex items-center justify-center">
-                              <span className="material-symbols-outlined text-orange-600 text-xl">
-                                analytics
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Most Active Form */}
-        {dashboardData.mostActiveForm && (
-          <div className="bg-white rounded-2xl p-6 shadow-md border border-slate-100 mb-8">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center">
-                <span className="material-symbols-outlined text-yellow-600">
-                  trending_up
-                </span>
-              </div>
-              <h3 className="text-xl font-bold text-slate-800">
-                Most Active Form
-              </h3>
-            </div>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-lg font-semibold text-slate-800">
-                  {dashboardData.mostActiveForm.title}
-                </p>
-                <p className="text-slate-600">
-                  {dashboardData.mostActiveForm.responseCount} responses
-                </p>
-              </div>
-              <button
-                onClick={() =>
-                  navigate(`/form/${dashboardData.mostActiveForm?.formId}`)
-                }
-                className="px-4 py-2 bg-yellow-50 text-yellow-700 border border-yellow-200 rounded-lg font-medium hover:bg-yellow-100 transition-colors"
-              >
-                View Form
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Recent Activity */}
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-          {/* Recent Forms */}
-          <div className="bg-white rounded-2xl p-6           shadow-md border border-slate-100">
-                      <div className="flex items-center gap-3 mb-6">
-                        <div className="w-10 h-10 bg-violet-100 rounded-xl flex items-center justify-center">
-                          <span className="material-symbols-outlined text-violet-600">
-                  description
-                </span>
-              </div>
-              <h3 className="text-xl font-bold text-slate-800">Recent Forms</h3>
-            </div>
-            <div className="space-y-4">
-              {dashboardData.recentForms.length === 0 ? (
-                <p className="text-slate-500 text-center py-4">
-                  No forms created yet
-                </p>
-              ) : (
-                dashboardData.recentForms.map((form) => (
-                  <div
-                    key={form.formId}
-                    className="flex items-center justify-between p-4 bg-slate-50 rounded-xl"
-                  >
-                    <div className="flex-1">
-                      <p className="font-semibold text-slate-800">
-                        {form.title}
-                      </p>
-                      <p className="text-sm text-slate-600">
-                        {form.fieldCount} fields •{" "}
-                        {new Date(form.createdAt).toLocaleDateString()}
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => navigate(`/form/${form.formId}`)}
-                      className="p-2 text-violet-600 hover:bg-violet-50 rounded-lg transition-colors duration-200"
-                    >
-                      <span className="material-symbols-outlined">
-                        visibility
-                      </span>
-                    </button>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-
-          {/* Recent Responses */}
-          <div className="bg-white rounded-2xl p-6           shadow-md border border-slate-100">
-                      <div className="flex items-center gap-3 mb-6">
-                        <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
-                          <span className="material-symbols-outlined text-blue-600">
-                            assignment
-                </span>
-              </div>
-              <h3 className="text-xl font-bold text-slate-800">
-                Recent Responses
-              </h3>
-            </div>
-            <div className="space-y-4">
-              {dashboardData.recentResponses.length === 0 ? (
-                <p className="text-slate-500 text-center py-4">
-                  No responses received yet
-                </p>
-              ) : (
-                dashboardData.recentResponses.map((response) => (
-                  <div
-                    key={response.responseId}
-                    className="flex items-center justify-between p-4 bg-slate-50 rounded-xl"
-                  >
-                    <div className="flex-1">
-                      <p className="font-semibold text-slate-800">
-                        {response.formTitle}
-                      </p>
-                      <p className="text-sm text-slate-600">
-                        {response.responseCount} fields •{" "}
-                        {new Date(response.createdAt).toLocaleDateString()}
-                      </p>
-                    </div>
-                    <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                      <span className="material-symbols-outlined text-green-600 text-sm">
-                        check
-                      </span>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="mt-8 bg-gradient-to-r from-violet-50 to-purple-50 rounded-2xl p-4 sm:p-8 border border-violet-100">
-          <div className="text-center">
-            <h3 className="text-2xl font-bold text-slate-800 mb-4">
-              Ready to create something amazing?
-            </h3>
-            <p className="text-slate-600 mb-6">
-              Use AI to build intelligent forms in minutes
-            </p>
-            <div className="flex flex-col gap-3 sm:flex-row sm:gap-4 justify-center items-stretch">
-              <button
-                onClick={() => navigate("/builder")}
-                className="              px-8 py-4 bg-gradient-to-r from-violet-600 to-purple-600 text-white border-0 rounded-xl font-semibold cursor-pointer transition-all duration-200 shadow-lg shadow-violet-500/25 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-violet-500/30"
-                            >
-                              <span className="material-symbols-outlined mr-2">add</span>
-                              Create New Form
-                            </button>
-                            <button
-                              onClick={() => navigate("/forms")}
-                              className="px-8 py-4 bg-white text-slate-700 border border-slate-200 rounded-xl font-semibold cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5"
-                            >
-                              <span className="material-symbols-outlined mr-2">list</span>
-                              Manage Forms
-                            </button>
-                            <button
-                              onClick={() => navigate("/responses")}
-                              className="px-8 py-4 bg-white text-slate-700 border border-slate-200 rounded-xl font-semibold cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5"
-              >
-                <span className="material-symbols-outlined mr-2">
-                  assignment
-                </span>
-                View Responses
-              </button>
-            </div>
-          </div>
-        </div>
+        <Button onClick={() => navigate("/builder")}>
+          <Plus className="size-4" />
+          New form
+        </Button>
       </div>
+
+      {isEmpty ? (
+        <EmptyState
+          icon={FileText}
+          title="Create your first form"
+          description="Describe what you need in plain English and FormGenie will compose it — then share the link and watch responses arrive here."
+          action={
+            <Button onClick={() => navigate("/builder")}>
+              <Plus className="size-4" />
+              Start building
+            </Button>
+          }
+        />
+      ) : (
+        <div className="flex flex-col gap-6">
+          {/* stats */}
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+            <StatCard icon={FileText} label="Total forms" value={data.totalForms} index={0} />
+            <StatCard icon={Inbox} label="Responses" value={data.totalResponses} index={1} />
+            <StatCard icon={ListChecks} label="Total fields" value={data.totalFields} index={2} />
+            <StatCard icon={Gauge} label="Avg fields / form" value={data.averageFieldsPerForm} index={3} />
+          </div>
+
+          {/* chart + most active */}
+          <div className="grid gap-6 lg:grid-cols-[1.6fr_1fr]">
+            <div className="rounded-xl border border-border bg-surface p-5 shadow-xs">
+              <div className="mb-4 flex items-center justify-between">
+                <h2 className="text-[15px] font-semibold text-ink">Activity</h2>
+                <div className="flex items-center gap-4 text-xs text-ink-muted">
+                  <span className="flex items-center gap-1.5">
+                    <span className="size-2 rounded-full bg-chart-1" /> Responses
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="size-2 rounded-full bg-chart-2" /> Forms
+                  </span>
+                </div>
+              </div>
+              {hasActivity ? (
+                <ActivityChart
+                  forms={data.formsByMonth}
+                  responses={data.responsesByMonth}
+                />
+              ) : (
+                <div className="flex h-[220px] items-center justify-center text-sm text-ink-faint">
+                  No activity yet — responses will show up here.
+                </div>
+              )}
+            </div>
+
+            <div className="rounded-xl border border-border bg-surface p-5 shadow-xs">
+              <h2 className="mb-4 text-[15px] font-semibold text-ink">
+                Most active form
+              </h2>
+              {data.mostActiveForm ? (
+                <div className="flex h-[220px] flex-col">
+                  <div className="flex size-11 items-center justify-center rounded-xl border border-border bg-surface-sunken text-accent">
+                    <TrendingUp className="size-5" strokeWidth={1.75} />
+                  </div>
+                  <p className="mt-4 font-display text-xl font-medium tracking-tight text-ink">
+                    {data.mostActiveForm.title}
+                  </p>
+                  <p className="text-sm text-ink-muted">
+                    {data.mostActiveForm.responseCount} responses
+                  </p>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    className="mt-auto w-fit"
+                    onClick={() =>
+                      navigate(`/responses/${data.mostActiveForm?.formId}`)
+                    }
+                  >
+                    View responses
+                    <ArrowUpRight className="size-4" />
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex h-[220px] items-center justify-center text-sm text-ink-faint">
+                  No responses yet.
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* recent activity */}
+          <div className="grid gap-6 lg:grid-cols-2">
+            <RecentPanel
+              title="Recent forms"
+              empty="No forms created yet"
+              items={data.recentForms.map((f) => ({
+                id: f.formId,
+                primary: f.title,
+                secondary: `${f.fieldCount} fields · ${new Date(f.createdAt).toLocaleDateString()}`,
+                onClick: () => navigate(`/responses/${f.formId}`),
+              }))}
+            />
+            <RecentPanel
+              title="Recent responses"
+              empty="No responses received yet"
+              accent
+              items={data.recentResponses.map((r) => ({
+                id: r.responseId,
+                primary: r.formTitle,
+                secondary: `${r.responseCount} fields · ${new Date(r.createdAt).toLocaleDateString()}`,
+              }))}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
+
+function RecentPanel({
+  title,
+  items,
+  empty,
+  accent,
+}: {
+  title: string;
+  empty: string;
+  accent?: boolean;
+  items: Array<{
+    id: string;
+    primary: string;
+    secondary: string;
+    onClick?: () => void;
+  }>;
+}) {
+  return (
+    <div className="rounded-xl border border-border bg-surface shadow-xs">
+      <div className="border-b border-border px-5 py-4">
+        <h2 className="text-[15px] font-semibold text-ink">{title}</h2>
+      </div>
+      <div className="p-2">
+        {items.length === 0 ? (
+          <p className="px-3 py-8 text-center text-sm text-ink-faint">{empty}</p>
+        ) : (
+          items.map((item) => (
+            <button
+              key={item.id}
+              onClick={item.onClick}
+              disabled={!item.onClick}
+              className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors enabled:hover:bg-surface-sunken disabled:cursor-default"
+            >
+              <span
+                className={`grid size-8 shrink-0 place-items-center rounded-lg ${
+                  accent
+                    ? "bg-success-soft text-success"
+                    : "bg-surface-sunken text-ink-muted"
+                }`}
+              >
+                {accent ? (
+                  <Check className="size-4" />
+                ) : (
+                  <FileText className="size-4" strokeWidth={1.75} />
+                )}
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-sm font-medium text-ink">
+                  {item.primary}
+                </span>
+                <span className="block truncate text-xs text-ink-faint">
+                  {item.secondary}
+                </span>
+              </span>
+              {item.onClick && (
+                <ArrowUpRight className="size-4 shrink-0 text-ink-faint" />
+              )}
+            </button>
+          ))
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default Dashboard;

@@ -1,6 +1,17 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useApi } from "../../services/api";
+import {
+  Search,
+  ArrowLeft,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  ArrowUp,
+  ArrowDown,
+  ChevronsUpDown,
+  Inbox,
+} from "lucide-react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -8,10 +19,14 @@ import {
   getSortedRowModel,
   getPaginationRowModel,
   flexRender,
-  ColumnDef,
-  SortingState,
-  ColumnFiltersState,
+  type ColumnDef,
+  type SortingState,
 } from "@tanstack/react-table";
+import { useApi } from "../../services/api";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { CenteredSpinner } from "./ui/spinner";
+import { EmptyState } from "./ui/empty-state";
 
 interface FormResponse {
   responseId: string;
@@ -23,6 +38,11 @@ interface FormResponse {
   createdAt: string;
 }
 
+interface UserForm {
+  formId: string;
+  title: string;
+}
+
 const FormResponses = () => {
   const navigate = useNavigate();
   const { formId } = useParams();
@@ -32,13 +52,11 @@ const FormResponses = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
 
   useEffect(() => {
-    if (formId) {
-      loadFormResponses();
-    }
+    if (formId) loadFormResponses();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formId]);
 
   const loadFormResponses = async () => {
@@ -47,14 +65,12 @@ const FormResponses = () => {
       const response = await getFormResponses(formId!);
       if (response.success && response.responses) {
         setResponses(response.responses);
-
-        // Get form title from user forms
         const formsResponse = await getUserForms();
         if (formsResponse.success && formsResponse.forms) {
-          const form = formsResponse.forms.find(
-            (f: any) => f.formId === formId
+          const form = (formsResponse.forms as UserForm[]).find(
+            (f) => f.formId === formId
           );
-          setFormTitle(form?.title || "Unknown Form");
+          setFormTitle(form?.title || "Form");
         }
       } else {
         setError(response.error || "Failed to load responses");
@@ -67,70 +83,54 @@ const FormResponses = () => {
     }
   };
 
-  // Create dynamic columns based on response fields
-  const columns = useMemo(() => {
+  const columns = useMemo<ColumnDef<FormResponse>[]>(() => {
     if (responses.length === 0) return [];
 
-    // Get all unique field labels from responses
     const allFieldLabels = new Set<string>();
-    responses.forEach((response) => {
-      response.responses.forEach((resp) => {
-        allFieldLabels.add(resp.label);
-      });
-    });
+    responses.forEach((r) =>
+      r.responses.forEach((resp) => allFieldLabels.add(resp.label))
+    );
 
     const baseColumns: ColumnDef<FormResponse>[] = [
       {
         accessorKey: "createdAt",
-        header: "Submitted At",
+        header: "Submitted",
         cell: ({ getValue }) => (
-          <div className="text-sm text-slate-600">
+          <span className="whitespace-nowrap text-ink-muted">
             {new Date(getValue() as string).toLocaleString()}
-          </div>
+          </span>
         ),
-        size: 180,
-        minSize: 150,
       },
       {
         accessorKey: "submitterId",
-        header: "Submitter ID",
+        header: "Submitter",
         cell: ({ getValue }) => (
-          <div className="text-sm text-slate-600 font-mono">
+          <span className="font-mono text-xs text-ink-faint">
             {(getValue() as string) || "Anonymous"}
-          </div>
+          </span>
         ),
-        size: 150,
-        minSize: 120,
       },
     ];
 
-    // Add dynamic columns for each field
     const fieldColumns: ColumnDef<FormResponse>[] = Array.from(
       allFieldLabels
     ).map((label) => ({
-      accessorKey: `responses.${label}`,
+      id: label,
+      accessorFn: (row) => {
+        const fr = row.responses.find((r) => r.label === label);
+        return Array.isArray(fr?.value) ? fr?.value.join(", ") : fr?.value;
+      },
       header: label,
-      cell: ({ row }) => {
-        const response = row.original;
-        const fieldResponse = response.responses.find((r) => r.label === label);
-        const value = fieldResponse?.value;
-
-        if (Array.isArray(value)) {
-          return (
-            <div className="text-sm text-slate-700 max-w-xs">
-              {value.join(", ")}
-            </div>
-          );
-        }
-
+      cell: ({ getValue }) => {
+        const value = getValue();
+        const display =
+          typeof value === "boolean" ? (value ? "Yes" : "No") : String(value ?? "—");
         return (
-          <div className="text-sm text-slate-700 max-w-xs truncate">
-            {String(value || "")}
-          </div>
+          <span className="block max-w-[16rem] truncate text-ink" title={display}>
+            {display || "—"}
+          </span>
         );
       },
-      size: 200,
-      minSize: 150,
     }));
 
     return [...baseColumns, ...fieldColumns];
@@ -139,243 +139,157 @@ const FormResponses = () => {
   const table = useReactTable({
     data: responses,
     columns,
-    state: {
-      sorting,
-      columnFilters,
-      globalFilter,
-    },
+    state: { sorting, globalFilter },
     onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    initialState: {
-      pagination: {
-        pageSize: 20,
-      },
-    },
+    initialState: { pagination: { pageSize: 20 } },
   });
 
-  if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen gap-4 text-slate-600">
-        <div className="relative w-15 h-15">
-          <div className="absolute w-full h-full border-3 border-transparent border-t-violet-600 rounded-full animate-spin"></div>
-        </div>
-        <p>Loading responses...</p>
-      </div>
-    );
-  }
+  if (loading) return <CenteredSpinner label="Loading responses…" />;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-8 px-4">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4">
-          <div className="flex-1">
-            <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">
-              {formTitle} - Responses
-            </h1>
-            <p className="text-slate-600 text-lg">
-              View and manage responses for this form
-            </p>
-          </div>
+    <div className="mx-auto max-w-6xl px-5 py-8 sm:px-8">
+      <button
+        onClick={() => navigate("/responses")}
+        className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-ink-muted transition-colors hover:text-ink"
+      >
+        <ArrowLeft className="size-4" />
+        All forms
+      </button>
 
-          <div className="flex gap-3">
-            <button
-              onClick={() => navigate("/forms")}
-              className="flex items-center gap-2 px-6 py-3 bg-white text-slate-700 border border-slate-200             rounded-xl font-semibold cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5"
-                        >
-                          <span className="material-symbols-outlined">list</span>
-                          All Forms
-                        </button>
-                        <button
-                          onClick={() => navigate("/dashboard")}
-                          className="flex items-center gap-2 px-6 py-3 bg-white text-slate-700 border border-slate-200 rounded-xl font-semibold cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5"
-            >
-              <span className="material-symbols-outlined">dashboard</span>
-              Dashboard
-            </button>
-          </div>
+      <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 className="font-display text-3xl font-medium tracking-tight text-ink">
+            {formTitle}
+          </h1>
+          <p className="mt-1 text-ink-muted">
+            {responses.length} response{responses.length === 1 ? "" : "s"}
+          </p>
         </div>
+        <Button variant="secondary" onClick={() => navigate(`/form/${formId}`)}>
+          View public form
+        </Button>
+      </div>
 
-        {error && (
-          <div className="flex items-center gap-2 p-4 bg-red-50 text-red-600 border border-red-200 rounded-xl mb-8">
-            <span className="material-symbols-outlined">error</span>
-            {error}
+      {error && (
+        <div className="mb-6 rounded-xl border border-danger/30 bg-danger-soft px-4 py-3 text-sm text-danger">
+          {error}
+        </div>
+      )}
+
+      {responses.length === 0 ? (
+        <EmptyState
+          icon={Inbox}
+          title="No responses yet"
+          description="Once people start filling out this form, their answers will appear here."
+          action={
+            <Button onClick={() => navigate(`/form/${formId}`)}>
+              View the form
+            </Button>
+          }
+        />
+      ) : (
+        <div className="overflow-hidden rounded-xl border border-border bg-surface shadow-xs">
+          {/* controls */}
+          <div className="flex flex-col gap-3 border-b border-border p-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="relative max-w-xs flex-1">
+              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-faint" />
+              <Input
+                placeholder="Search responses…"
+                value={globalFilter}
+                onChange={(e) => setGlobalFilter(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+            <span className="text-[13px] text-ink-muted">
+              {table.getFilteredRowModel().rows.length} of {responses.length}
+            </span>
           </div>
-        )}
 
-        {responses.length === 0 ? (
-          <div className="bg-white rounded-2xl p-12 shadow-lg border border-slate-100 text-center">
-            <div className="w-20 h-20 bg-gradient-to-br from-slate-100 to-slate-200 rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="material-symbols-outlined text-3xl text-slate-400">
-                assignment
-              </span>
-            </div>
-            <h3 className="text-2xl font-semibold mb-2 text-slate-700">
-              No Responses Yet
-            </h3>
-            <p className="text-slate-600 mb-8">
-              Responses will appear here once people start filling out this form
-            </p>
-            <div className="flex gap-4 justify-center">
-              <button
-                onClick={() => navigate(`/form/${formId}`)}
-                className="              px-8 py-4 bg-gradient-to-r from-violet-600 to-purple-600 text-white border-0 rounded-xl font-semibold cursor-pointer transition-all duration-200 shadow-lg shadow-violet-500/25 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-violet-500/30"
-                            >
-                              View Form
-                            </button>
-                            <button
-                              onClick={() => navigate("/forms")}
-                              className="px-8 py-4 bg-white text-slate-700 border border-slate-200 rounded-xl font-semibold cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5"
-              >
-                Back to Forms
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div className="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden">
-            {/* Table Controls */}
-            <div className="p-6 border-b border-slate-200 bg-slate-50">
-              <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="relative">
-                    <span className="material-symbols-outlined absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400">
-                      search
-                    </span>
-                    <input
-                      type="text"
-                      placeholder="Search responses..."
-                      value={globalFilter}
-                      onChange={(e) => setGlobalFilter(e.target.value)}
-                      className="pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent"
-                    />
-                  </div>
-                  <div className="text-sm text-slate-600">
-                    {table.getFilteredRowModel().rows.length} of{" "}
-                    {responses.length} responses
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => table.setPageIndex(0)}
-                    disabled={!table.getCanPreviousPage()}
-                    className="p-2 border border-slate-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-100"
-                  >
-                    <span className="material-symbols-outlined text-sm">
-                      first_page
-                    </span>
-                  </button>
-                  <button
-                    onClick={() => table.previousPage()}
-                    disabled={!table.getCanPreviousPage()}
-                    className="p-2 border border-slate-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-100"
-                  >
-                    <span className="material-symbols-outlined text-sm">
-                      chevron_left
-                    </span>
-                  </button>
-                  <span className="px-3 py-2 text-sm text-slate-600">
-                    Page {table.getState().pagination.pageIndex + 1} of{" "}
-                    {table.getPageCount()}
-                  </span>
-                  <button
-                    onClick={() => table.nextPage()}
-                    disabled={!table.getCanNextPage()}
-                    className="p-2 border border-slate-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-100"
-                  >
-                    <span className="material-symbols-outlined text-sm">
-                      chevron_right
-                    </span>
-                  </button>
-                  <button
-                    onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-                    disabled={!table.getCanNextPage()}
-                    className="p-2 border border-slate-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-100"
-                  >
-                    <span className="material-symbols-outlined text-sm">
-                      last_page
-                    </span>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Table */}
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-slate-50 border-b border-slate-200">
-                  {table.getHeaderGroups().map((headerGroup) => (
-                    <tr key={headerGroup.id}>
-                      {headerGroup.headers.map((header) => (
-                        <th
-                          key={header.id}
-                          className="px-4 py-3 text-left text-sm font-semibold text-slate-700 border-r border-slate-200 last:border-r-0"
-                          style={{ width: header.getSize() }}
-                        >
-                          <div
-                            className={`flex items-center gap-2 ${
-                              header.column.getCanSort()
-                                ? "cursor-pointer select-none"
-                                : ""
-                            }`}
-                            onClick={header.column.getToggleSortingHandler()}
-                          >
-                            {flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                            {header.column.getCanSort() && (
-                              <span className="material-symbols-outlined text-sm text-slate-400">
-                                {header.column.getIsSorted() === "asc"
-                                  ? "arrow_upward"
-                                  : header.column.getIsSorted() === "desc"
-                                  ? "arrow_downward"
-                                  : "unfold_more"}
-                              </span>
-                            )}
-                          </div>
-                        </th>
-                      ))}
-                    </tr>
-                  ))}
-                </thead>
-                <tbody className="divide-y divide-slate-200">
-                  {table.getRowModel().rows.map((row) => (
-                    <tr
-                      key={row.id}
-                      className="hover:bg-slate-50 transition-colors"
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <td
-                          key={cell.id}
-                          className="px-4 py-3 text-sm border-r border-slate-200 last:border-r-0"
-                          style={{ width: cell.column.getSize() }}
+          {/* table */}
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse text-sm">
+              <thead>
+                {table.getHeaderGroups().map((hg) => (
+                  <tr key={hg.id} className="border-b border-border bg-surface-sunken/50">
+                    {hg.headers.map((header) => (
+                      <th
+                        key={header.id}
+                        className="whitespace-nowrap px-4 py-3 text-left text-[13px] font-medium text-ink-muted"
+                      >
+                        <button
+                          className="inline-flex items-center gap-1.5 hover:text-ink"
+                          onClick={header.column.getToggleSortingHandler()}
                         >
                           {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
+                            header.column.columnDef.header,
+                            header.getContext()
                           )}
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Pagination Info */}
-            <div className="px-6 py-4 bg-slate-50 border-t border-slate-200 text-sm text-slate-600">
-              Showing {table.getRowModel().rows.length} of {responses.length}{" "}
-              responses
-            </div>
+                          {header.column.getIsSorted() === "asc" ? (
+                            <ArrowUp className="size-3.5" />
+                          ) : header.column.getIsSorted() === "desc" ? (
+                            <ArrowDown className="size-3.5" />
+                          ) : (
+                            <ChevronsUpDown className="size-3.5 text-ink-faint" />
+                          )}
+                        </button>
+                      </th>
+                    ))}
+                  </tr>
+                ))}
+              </thead>
+              <tbody>
+                {table.getRowModel().rows.map((row) => (
+                  <tr
+                    key={row.id}
+                    className="border-b border-border last:border-0 transition-colors hover:bg-surface-sunken/40"
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <td key={cell.id} className="px-4 py-3 align-top">
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-        )}
-      </div>
+
+          {/* pagination */}
+          {table.getPageCount() > 1 && (
+            <div className="flex items-center justify-between border-t border-border p-4">
+              <span className="text-[13px] text-ink-muted">
+                Page {table.getState().pagination.pageIndex + 1} of{" "}
+                {table.getPageCount()}
+              </span>
+              <div className="flex items-center gap-1">
+                {[
+                  { icon: ChevronsLeft, fn: () => table.setPageIndex(0), can: table.getCanPreviousPage() },
+                  { icon: ChevronLeft, fn: () => table.previousPage(), can: table.getCanPreviousPage() },
+                  { icon: ChevronRight, fn: () => table.nextPage(), can: table.getCanNextPage() },
+                  { icon: ChevronsRight, fn: () => table.setPageIndex(table.getPageCount() - 1), can: table.getCanNextPage() },
+                ].map(({ icon: Icon, fn, can }, i) => (
+                  <button
+                    key={i}
+                    onClick={fn}
+                    disabled={!can}
+                    className="grid size-8 place-items-center rounded-lg border border-border text-ink-muted transition-colors enabled:hover:bg-surface-sunken enabled:hover:text-ink disabled:opacity-40"
+                  >
+                    <Icon className="size-4" />
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

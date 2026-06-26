@@ -49,7 +49,7 @@ export const useApi = () => {
         body: JSON.stringify({ refinementPrompt, sessionId }),
       }),
 
-    saveForm: (formData: any) =>
+    saveForm: (formData: unknown) =>
       apiCall("/api/v1/forms/save-form", {
         method: "POST",
         body: JSON.stringify(formData),
@@ -60,7 +60,7 @@ export const useApi = () => {
     getPublicForm: (formId: string) =>
       apiCall(`/api/v1/forms/public/${formId}`),
 
-    updateForm: (formId: string, formData: any) =>
+    updateForm: (formId: string, formData: unknown) =>
       apiCall(`/api/v1/forms/update/${formId}`, {
         method: "PUT",
         body: JSON.stringify(formData),
@@ -72,7 +72,7 @@ export const useApi = () => {
     amendForm: (formId: string) =>
       apiCall(`/api/v1/forms/amend/${formId}`, { method: "POST" }),
 
-    submitFormResponse: (formId: string, responses: any) =>
+    submitFormResponse: (formId: string, responses: unknown) =>
       apiCall(`/api/v1/responses/submit/${formId}`, {
         method: "POST",
         body: JSON.stringify({ responses }),

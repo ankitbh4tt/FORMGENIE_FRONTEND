@@ -19,5 +19,14 @@ export default tseslint.config([
       ecmaVersion: 2020,
       globals: globals.browser,
     },
+    rules: {
+      // Co-locating hooks/variant helpers next to their components is
+      // intentional (provider + hook, component + cva variants). Keep the
+      // fast-refresh hint as a warning rather than a hard error.
+      'react-refresh/only-export-components': [
+        'warn',
+        { allowConstantExport: true },
+      ],
+    },
   },
 ])

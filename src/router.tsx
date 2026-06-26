@@ -1,5 +1,4 @@
 import { createBrowserRouter } from "react-router-dom";
-import App from "./App";
 import { LandingPage } from "./pages/LandingPage";
 import DashboardPage from "./components/Dashboard";
 import FormsPage from "./components/Forms";
@@ -8,74 +7,38 @@ import FormResponses from "./components/FormResponses";
 import FormView from "./components/FormView";
 import ProtectedRoutes from "./components/common/ProtectedRoutes";
 import FormBuilder from "./components/FormBuilder/FormBuilder";
+import AppShell from "./layouts/AppShell";
+import MarketingLayout from "./layouts/MarketingLayout";
+import PublicLayout from "./layouts/PublicLayout";
 
 const router = createBrowserRouter([
+  // Public marketing
   {
-    element: <App />, // <-- common layout wrapper
+    element: <MarketingLayout />,
+    children: [{ path: "/", element: <LandingPage /> }],
+  },
+
+  // Public form respondent view (minimal chrome)
+  {
+    element: <PublicLayout />,
+    children: [{ path: "/form/:formId", element: <FormView /> }],
+  },
+
+  // Authenticated product (sidebar app shell)
+  {
+    element: <ProtectedRoutes />,
     children: [
       {
-        path: "/",
-        element: <LandingPage />,
-      },
-      {
-        path: "/dashboard",
-        element: (
-          <ProtectedRoutes>
-            <DashboardPage />
-          </ProtectedRoutes>
-        ),
-      },
-      {
-        path: "/forms",
-        element: (
-          <ProtectedRoutes>
-            <FormsPage />
-          </ProtectedRoutes>
-        ),
-      },
-      {
-        path: "/responses",
-        element: (
-          <ProtectedRoutes>
-            <FormSelector />
-          </ProtectedRoutes>
-        ),
-      },
-      {
-        path: "/responses/:formId",
-        element: (
-          <ProtectedRoutes>
-            <FormResponses />
-          </ProtectedRoutes>
-        ),
-      },
-      {
-        path: "/chat",
-        element: (
-          <ProtectedRoutes>
-            <FormBuilder />
-          </ProtectedRoutes>
-        ),
-      },
-      {
-        path: "/builder",
-        element: (
-          <ProtectedRoutes>
-            <FormBuilder />
-          </ProtectedRoutes>
-        ),
-      },
-      {
-        path: "/builder/:sessionId",
-        element: (
-          <ProtectedRoutes>
-            <FormBuilder />
-          </ProtectedRoutes>
-        ),
-      },
-      {
-        path: "/form/:formId",
-        element: <FormView />,
+        element: <AppShell />,
+        children: [
+          { path: "/dashboard", element: <DashboardPage /> },
+          { path: "/forms", element: <FormsPage /> },
+          { path: "/responses", element: <FormSelector /> },
+          { path: "/responses/:formId", element: <FormResponses /> },
+          { path: "/chat", element: <FormBuilder /> },
+          { path: "/builder", element: <FormBuilder /> },
+          { path: "/builder/:sessionId", element: <FormBuilder /> },
+        ],
       },
     ],
   },

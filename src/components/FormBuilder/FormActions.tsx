@@ -1,7 +1,19 @@
 import { useState } from "react";
-import LoadingButton from "../ui/LoadingButton";
+import { Rocket, Wand2 } from "lucide-react";
 import { useApi } from "../../../services/api";
-import { toast } from "react-hot-toast"; // For UX feedback
+import { toast } from "react-hot-toast";
+import { Button } from "../ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "../ui/dialog";
+import { Field } from "../ui/field";
+import { Input } from "../ui/input";
+import { Textarea } from "../ui/textarea";
 
 interface FormField {
   label: string;
@@ -25,26 +37,19 @@ const FormActions = ({
   formId,
   onSchemaUpdate,
 }: FormActionsProps) => {
-  // Added onSchemaUpdate for refinement callback
   const [isPublishing, setIsPublishing] = useState(false);
   const [isAmending, setIsAmending] = useState(false);
   const [formTitle, setFormTitle] = useState("");
   const [formDescription, setFormDescription] = useState("");
   const [showSaveModal, setShowSaveModal] = useState(false);
-  const [showAmendModal, setShowAmendModal] = useState(false); // New modal for refinement prompt
-  const [refinementPrompt, setRefinementPrompt] = useState(""); // Temp state for prompt
+  const [showAmendModal, setShowAmendModal] = useState(false);
+  const [refinementPrompt, setRefinementPrompt] = useState("");
 
   const { saveForm, amendForm, refineSessionSchema } = useApi();
 
-  const handlePublish = () => {
-    setShowSaveModal(true);
-  };
-
   const handleSaveForm = async () => {
     if (!formTitle.trim()) return;
-
     setIsPublishing(true);
-
     try {
       const response = await saveForm({
         title: formTitle,
@@ -52,10 +57,9 @@ const FormActions = ({
         schema: formSchema,
         sessionId,
       });
-
       if (response.success) {
         setShowSaveModal(false);
-        toast.success("Form saved and published successfully!");
+        toast.success("Form saved and published");
         onNavigate(`/form/${response.formId}`);
       } else {
         throw new Error(response.error);
@@ -69,15 +73,9 @@ const FormActions = ({
   };
 
   const handleAmendForm = () => {
-    if (formId) {
-      // Saved form: Use DB-based amendment
-      amendSavedForm();
-    } else if (sessionId) {
-      // Unsaved: Open modal for refinement prompt
-      setShowAmendModal(true);
-    } else {
-      toast.error("No session or form ID available for amendment.");
-    }
+    if (formId) amendSavedForm();
+    else if (sessionId) setShowAmendModal(true);
+    else toast.error("No session or form to amend.");
   };
 
   const amendSavedForm = async () => {
@@ -85,13 +83,13 @@ const FormActions = ({
     try {
       const response = await amendForm(formId || "");
       if (response.success) {
-        toast.success("Amendment session started!");
-        // Update UI with new session/schema
+        toast.success("Amendment session started");
         onSchemaUpdate(response.form.schema, response.sessionId);
       } else {
         throw new Error(response.error);
       }
     } catch (error) {
+      console.error("Error amending form:", error);
       toast.error("Failed to start amendment.");
     } finally {
       setIsAmending(false);
@@ -100,22 +98,22 @@ const FormActions = ({
 
   const handleRefineUnsaved = async () => {
     if (!refinementPrompt.trim()) return;
-
     setIsAmending(true);
     try {
-      const response = await refineSessionSchema(refinementPrompt, sessionId || "");
+      const response = await refineSessionSchema(
+        refinementPrompt,
+        sessionId || ""
+      );
       if (response.success) {
-        toast.success("Form refined successfully!");
+        toast.success("Form refined");
         setShowAmendModal(false);
-        setRefinementPrompt(""); // Reset
-        // Update local schema and session
+        setRefinementPrompt("");
         onSchemaUpdate(response.schema, response.sessionId);
-        // Optional: Render messages for history
-        console.log("Refinement messages:", response.messages); // Use for chat UI
       } else {
         throw new Error(response.error);
       }
     } catch (error) {
+      console.error("Error refining form:", error);
       toast.error("Failed to refine form.");
     } finally {
       setIsAmending(false);
@@ -124,168 +122,109 @@ const FormActions = ({
 
   return (
     <>
-      <div className="flex flex-col sm:flex-row gap-3 pt-4">
-        <LoadingButton
-          onClick={handlePublish}
+      <div className="flex flex-col gap-3 border-t border-border pt-6 sm:flex-row">
+        <Button
+          onClick={() => setShowSaveModal(true)}
           disabled={!formSchema.length}
-          className="px-6 py-3 bg-gradient-to-r         from-violet-600 to-purple-600 text-white border-0 rounded-xl font-semibold cursor-pointer transition-all duration-200 shadow-lg shadow-violet-500/25 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-violet-500/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
-                  loading={isPublishing}
-                >
-                  <span className="material-symbols-outlined">publish</span>
-                  Save & Publish
-                </LoadingButton>
-
-                <LoadingButton
-                  onClick={handleAmendForm}
-                  disabled={!formSchema.length || !(formId || sessionId)}
-                  loading={isAmending}
-          className="px-6 py-3 border-2 border-violet-300 text-violet-600 bg-white rounded-2xl font-semibold cursor-pointer transition-all duration-200 hover:bg-violet-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          loading={isPublishing}
+          className="flex-1"
         >
-          <span className="material-symbols-outlined">edit</span>
-          Amend Form
-        </LoadingButton>
+          {!isPublishing && <Rocket className="size-4" />}
+          Save &amp; publish
+        </Button>
+        <Button
+          variant="secondary"
+          onClick={handleAmendForm}
+          disabled={!formSchema.length || !(formId || sessionId)}
+          loading={isAmending}
+          className="flex-1"
+        >
+          {!isAmending && <Wand2 className="size-4" />}
+          Refine
+        </Button>
       </div>
 
-      {/* Existing Save Modal */}
-      {showSaveModal && (
-        <div
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-          onClick={() => setShowSaveModal(false)}
-        >
-          <div
-            className="bg-white rounded-3xl shadow-2xl           border border-slate-200 overflow-hidden max-w-md w-full"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <div className="p-6 border-b border-slate-100 bg-gradient-to-r from-white to-slate-50 flex justify-between items-center">
-                        <h3 className="text-xl font-bold text-slate-800">
-                          Save & Publish Form
-                        </h3>
-              <button
-                onClick={() => setShowSaveModal(false)}
-                className="p-2 bg-transparent border-0 text-slate-400 cursor-pointer rounded-lg transition-all duration-200 hover:bg-slate-100 hover:text-slate-600"
-              >
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
+      {/* Save & publish */}
+      <Dialog open={showSaveModal} onOpenChange={setShowSaveModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Save &amp; publish</DialogTitle>
+            <DialogDescription>
+              Give your form a name. You can share the link right after.
+            </DialogDescription>
+          </DialogHeader>
 
-            <div className="p-6 space-y-4">
-              <div className="flex flex-col gap-2">
-                <label
-                  htmlFor="form-title"
-                  className="text-sm font-semibold text-slate-700"
-                >
-                  Form Title *
-                </label>
-                <input
-                  id="form-title"
-                  type="text"
-                  value={formTitle}
-                  onChange={(e) => setFormTitle(e.target.value)}
-                  placeholder="Enter form title"
-                  className="px-4 py-3 border-2 border-slate-200 rounded-xl text-sm transition-all duration-200 font-inherit focus:outline-none focus:border-violet-500 focus:ring-4 focus:ring-violet-100"
-                  autoFocus
-                />
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <label
-                  htmlFor="form-description"
-                  className="text-sm font-semibold text-slate-700"
-                >
-                  Description (Optional)
-                </label>
-                <textarea
-                  id="form-description"
-                  value={formDescription}
-                  onChange={(e) => setFormDescription(e.target.value)}
-                  placeholder="Enter form description"
-                  className="px-4 py-3 border-2 border-slate-200 rounded-xl text-sm resize-vertical min-h-[100px] transition-all duration-200 font-inherit focus:outline-none focus:border-violet-500 focus:ring-4 focus:ring-violet-100"
-                  rows={3}
-                />
-              </div>
-            </div>
-
-            <div className="p-6 border-t border-slate-100 flex gap-3">
-              <button
-                onClick={() => setShowSaveModal(false)}
-                className="px-6 py-3 border-2 border-slate-300 text-slate-600 bg-white rounded-2xl font-semibold cursor-pointer transition-all duration-200 hover:bg-slate-50"
-              >
-                Cancel
-              </button>
-              <LoadingButton
-                onClick={handleSaveForm}
-                disabled={!formTitle.trim()}
-                loading={isPublishing}
-                className="px-6 py-3 bg-gradient-to-r               from-violet-600 to-purple-600 text-white border-0 rounded-xl font-semibold cursor-pointer transition-all duration-200 shadow-lg shadow-violet-500/25 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-violet-500/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
-                            >
-                              <span className="material-symbols-outlined">publish</span>
-                              Publish Form
-              </LoadingButton>
-            </div>
+          <div className="flex flex-col gap-4">
+            <Field label="Form title" htmlFor="form-title" required>
+              <Input
+                id="form-title"
+                value={formTitle}
+                onChange={(e) => setFormTitle(e.target.value)}
+                placeholder="e.g. Customer feedback"
+                autoFocus
+              />
+            </Field>
+            <Field label="Description" htmlFor="form-description" hint="Optional">
+              <Textarea
+                id="form-description"
+                value={formDescription}
+                onChange={(e) => setFormDescription(e.target.value)}
+                placeholder="A short note shown at the top of your form"
+                rows={3}
+              />
+            </Field>
           </div>
-        </div>
-      )}
 
-      {/* New: Amendment Modal for Unsaved Refinement */}
-      {showAmendModal && (
-        <div
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-          onClick={() => setShowAmendModal(false)}
-        >
-          <div
-            className="bg-white rounded-3xl shadow-2xl           border border-slate-200 overflow-hidden max-w-md w-full"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <div className="p-6 border-b border-slate-100 bg-gradient-to-r from-white to-slate-50 flex justify-between items-center">
-                        <h3 className="text-xl font-bold text-slate-800">
-                          Refine Your Form
-              </h3>
-              <button
-                onClick={() => setShowAmendModal(false)}
-                className="p-2 bg-transparent border-0 text-slate-400 cursor-pointer rounded-lg transition-all duration-200 hover:bg-slate-100 hover:text-slate-600"
-              >
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setShowSaveModal(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSaveForm}
+              disabled={!formTitle.trim()}
+              loading={isPublishing}
+            >
+              Publish form
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
-            <div className="p-6 space-y-4">
-              <div className="flex flex-col gap-2">
-                <label
-                  htmlFor="refinement-prompt"
-                  className="text-sm font-semibold text-slate-700"
-                >
-                  Refinement Prompt *
-                </label>
-                <textarea
-                  id="refinement-prompt"
-                  value={refinementPrompt}
-                  onChange={(e) => setRefinementPrompt(e.target.value)}
-                  placeholder="e.g., 'Make the email field required and add a phone number field'"
-                  className="px-4 py-3 border-2 border-slate-200 rounded-xl text-sm resize-vertical min-h-[100px] transition-all duration-200 font-inherit focus:outline-none focus:border-violet-500 focus:ring-4 focus:ring-violet-100"
-                  rows={3}
-                />
-              </div>
-            </div>
+      {/* Refine (unsaved) */}
+      <Dialog open={showAmendModal} onOpenChange={setShowAmendModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Refine your form</DialogTitle>
+            <DialogDescription>
+              Describe the change and I'll update the form.
+            </DialogDescription>
+          </DialogHeader>
 
-            <div className="p-6 border-t border-slate-100 flex gap-3">
-              <button
-                onClick={() => setShowAmendModal(false)}
-                className="px-6 py-3 border-2 border-slate-300 text-slate-600 bg-white rounded-2xl font-semibold cursor-pointer transition-all duration-200 hover:bg-slate-50"
-              >
-                Cancel
-              </button>
-              <LoadingButton
-                onClick={handleRefineUnsaved}
-                disabled={!refinementPrompt.trim()}
-                loading={isAmending}
-                className="px-6 py-3 bg-gradient-to-r               from-violet-600 to-purple-600 text-white border-0 rounded-xl font-semibold cursor-pointer transition-all duration-200 shadow-lg shadow-violet-500/25 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-violet-500/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
-                            >
-                              Refine Form
-              </LoadingButton>
-            </div>
-          </div>
-        </div>
-      )}
+          <Field label="What should change?" htmlFor="refinement-prompt" required>
+            <Textarea
+              id="refinement-prompt"
+              value={refinementPrompt}
+              onChange={(e) => setRefinementPrompt(e.target.value)}
+              placeholder="e.g. Make email required and add a phone number field"
+              rows={3}
+              autoFocus
+            />
+          </Field>
+
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setShowAmendModal(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleRefineUnsaved}
+              disabled={!refinementPrompt.trim()}
+              loading={isAmending}
+            >
+              Refine form
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

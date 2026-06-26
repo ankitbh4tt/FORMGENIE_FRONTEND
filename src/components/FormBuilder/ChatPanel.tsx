@@ -1,6 +1,8 @@
 import { useRef, useEffect } from "react";
+import { ArrowUp } from "lucide-react";
 import MessageBubble from "./MessageBubble";
 import TypingIndicator from "../ui/TypingIndicator";
+import { cn } from "@/lib/utils";
 
 interface Message {
   id: number | string;
@@ -18,6 +20,12 @@ interface ChatPanelProps {
   setInputValue: (val: string) => void;
 }
 
+const SUGGESTIONS = [
+  { label: "Contact form", prompt: "Create a contact form with name, email, and a message." },
+  { label: "Event RSVP", prompt: "Build an RSVP form with name, email, number of guests, and dietary notes." },
+  { label: "Feedback survey", prompt: "Make a feedback survey with a rating and a short comment." },
+];
+
 const ChatPanel = ({
   messages,
   onSendMessage,
@@ -26,130 +34,99 @@ const ChatPanel = ({
   setInputValue,
 }: ChatPanelProps) => {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
-  const inputRef = useRef<HTMLTextAreaElement | null>(null);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
 
   useEffect(() => {
-    scrollToBottom();
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isLoading]);
+
+  const submit = () => {
+    if (inputValue.trim() && !isLoading) onSendMessage(inputValue);
+  };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (inputValue.trim() && !isLoading) {
-      onSendMessage(inputValue);
-    }
+    submit();
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      if (inputValue.trim() && !isLoading) {
-        onSendMessage(inputValue);
-      }
+      submit();
     }
   };
 
+  const hasUserMessage = messages.some((m) => m.type === "user");
+
   return (
-    <div className="flex flex-col bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex-1 max-h-full">
-      <div className="p-4 sm:p-6 border-b border-slate-100 bg-gradient-to-r from-white to-slate-50 flex justify-between items-start">
-        <div className="flex-1">
-          <h2 className="text-xl sm:text-2xl font-bold mb-1 bg-gradient-to-r           from-violet-600 to-purple-600 bg-clip-text text-transparent">
-                      AI Form Builder
+    <div className="flex flex-1 flex-col overflow-hidden rounded-2xl border border-border bg-surface shadow-xs">
+      {/* header */}
+      <div className="flex items-center justify-between border-b border-border px-5 py-4">
+        <div>
+          <h2 className="font-display text-lg font-medium tracking-tight text-ink">
+            Form assistant
           </h2>
-          <p className="text-slate-600 text-xs sm:text-sm">
-            Describe the form you want to create
+          <p className="text-[13px] text-ink-muted">
+            Describe what you need — refine by chatting
           </p>
         </div>
-        <div className="flex items-center gap-1.5 sm:gap-2">
-          <div
-            className={`w-2 h-2 rounded-full transition-all duration-300 ${
-              isLoading ? "bg-amber-500 animate-pulse" : "bg-emerald-500"
-            }`}
-          ></div>
-          <span className="text-xs text-slate-600 font-medium hidden sm:inline">
-            {isLoading ? "Generating..." : "Ready"}
+        <div className="flex items-center gap-2">
+          <span
+            className={cn(
+              "size-2 rounded-full transition-colors",
+              isLoading ? "animate-pulse bg-warning" : "bg-success"
+            )}
+          />
+          <span className="hidden text-xs font-medium text-ink-muted sm:inline">
+            {isLoading ? "Composing…" : "Ready"}
           </span>
         </div>
       </div>
 
-      <div className="flex-1 p-3 sm:p-6 overflow-y-auto flex flex-col gap-3 sm:gap-4 min-h-0">
-        {messages.map((message: Message) => (
+      {/* messages */}
+      <div className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto px-4 py-5 sm:px-5">
+        {messages.map((message) => (
           <MessageBubble key={message.id} message={message} />
         ))}
-
         {isLoading && <TypingIndicator />}
-
         <div ref={messagesEndRef} />
       </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="p-3 sm:p-6 border-t border-slate-100 bg-white"
-      >
-        <div className="flex items-end gap-2 sm:gap-3 mb-3 sm:mb-4">
+      {/* composer */}
+      <form onSubmit={handleSubmit} className="border-t border-border p-4">
+        {!hasUserMessage && (
+          <div className="mb-3 flex flex-wrap gap-2">
+            {SUGGESTIONS.map((s) => (
+              <button
+                key={s.label}
+                type="button"
+                onClick={() => setInputValue(s.prompt)}
+                className="rounded-full border border-border bg-surface px-3 py-1.5 text-[13px] text-ink-muted transition-colors hover:border-border-strong hover:text-ink"
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <div className="flex items-end gap-2 rounded-xl border border-border-strong bg-surface p-2 transition-colors focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/25">
           <textarea
-            ref={inputRef}
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder="Describe your form..."
-            className="flex-1 p-3 sm:p-4 border-2 border-slate-200 rounded-2xl text-sm resize-none transition-all duration-200 font-inherit min-h-[48px] max-h-[120px] focus:outline-none focus:border-violet-500 focus:ring-4 focus:ring-violet-100 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed"
+            onKeyDown={handleKeyDown}
+            placeholder="Describe your form…"
             rows={1}
             disabled={isLoading}
+            className="max-h-[140px] min-h-[28px] flex-1 resize-none bg-transparent px-2 py-1.5 text-sm text-ink outline-none placeholder:text-ink-faint disabled:opacity-60"
           />
           <button
             type="submit"
             disabled={!inputValue.trim() || isLoading}
-            className="p-3 bg-gradient-to-r from-violet-600 to-purple-600 border-0 rounded-xl text-white cursor-pointer transition-all duration-200 flex items-center justify-center min-w-[48px] h-12 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-violet-500/25 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none active:scale-95"
+            aria-label="Send"
+            className="grid size-9 shrink-0 place-items-center rounded-lg bg-accent text-accent-fg transition-colors hover:bg-accent-hover disabled:opacity-40 disabled:hover:bg-accent"
           >
-            <span className="material-symbols-outlined text-xl">
-              {isLoading ? "hourglass_empty" : "send"}
-            </span>
+            <ArrowUp className="size-[18px]" />
           </button>
         </div>
-
-        {!messages.some((m: Message) => m.type === "user") && (
-          <div className="mt-2">
-            <div className="flex gap-2 flex-wrap">
-              <button
-                type="button"
-                onClick={() =>
-                  setInputValue(
-                    "Create a contact form with name, email, and message"
-                  )
-                }
-                className="px-3 sm:px-4 py-1.5 sm:py-2 bg-slate-50 border border-slate-200 rounded-full text-xs text-slate-600 cursor-pointer transition-all duration-200 hover:bg-slate-100               hover:border-violet-500 hover:text-violet-600 active:scale-95"
-                            >
-                              📝 Contact Form
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() =>
-                                setInputValue(
-                                  "Build a survey with multiple choice and rating questions"
-                                )
-                              }
-                              className="px-3 sm:px-4 py-1.5 sm:py-2 bg-slate-50 border border-slate-200 rounded-full text-xs text-slate-600 cursor-pointer transition-all duration-200 hover:bg-slate-100 hover:border-violet-500 hover:text-violet-600 active:scale-95"
-                            >
-                              📊 Survey Form
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() =>
-                                setInputValue(
-                                  "Make a registration form with personal details"
-                                )
-                              }
-                              className="px-3 sm:px-4 py-1.5 sm:py-2 bg-slate-50 border border-slate-200 rounded-full text-xs text-slate-600 cursor-pointer transition-all duration-200 hover:bg-slate-100 hover:border-violet-500 hover:text-violet-600 active:scale-95"
-              >
-                ✍️ Registration Form
-              </button>
-            </div>
-          </div>
-        )}
       </form>
     </div>
   );

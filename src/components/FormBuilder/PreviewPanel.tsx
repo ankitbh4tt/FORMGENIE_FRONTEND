@@ -1,14 +1,8 @@
-import { useState } from "react";
-import FormPreview from "./FormPreview";
+import { FileText } from "lucide-react";
 import FormActions from "./FormActions";
 import FormSkeleton from "../ui/FormSkeleton";
-
-interface FormField {
-  label: string;
-  type: string;
-  required?: boolean;
-  options?: string[];
-}
+import { FormRenderer } from "../form-fields/FormRenderer";
+import { initialValues, type FormField } from "../form-fields/types";
 
 interface PreviewPanelProps {
   formSchema: FormField[];
@@ -18,69 +12,62 @@ interface PreviewPanelProps {
   isGenerating: boolean;
 }
 
-const PreviewPanel = ({ formSchema, sessionId, onNavigate, onSchemaUpdate, isGenerating }: PreviewPanelProps) => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+const PreviewPanel = ({
+  formSchema,
+  sessionId,
+  onNavigate,
+  onSchemaUpdate,
+  isGenerating,
+}: PreviewPanelProps) => {
+  const showSkeleton = isGenerating;
+  const hasForm = formSchema.length > 0;
 
   return (
-    <div
-      className={`flex flex-col bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex-1 max-h-full transition-all duration-300 ${
-        isCollapsed ? "lg:flex" : ""
-      }`}
-    >
-      <div className="p-6 border-b border-slate-100 bg-gradient-to-r from-white to-slate-50 flex justify-between items-center">
-        <div className="flex-1">
-          <h2 className="text-xl font-bold text-slate-800 mb-1">
-            Live Preview
+    <div className="flex flex-1 flex-col overflow-hidden rounded-2xl border border-border bg-surface shadow-xs">
+      <div className="flex items-center justify-between border-b border-border px-5 py-4">
+        <div>
+          <h2 className="font-display text-lg font-medium tracking-tight text-ink">
+            Live preview
           </h2>
-          <p className="text-slate-600 text-sm">
-            Generated form based on your chat
+          <p className="text-[13px] text-ink-muted">
+            Updates as you chat
           </p>
         </div>
-
-        <button
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className="p-2 bg-transparent border-0 text-violet-600 cursor-pointer rounded-lg transition-all duration-200 lg:hidden hover:bg-slate-50"
-        >
-          <span className="material-symbols-outlined">
-            {isCollapsed ? "expand_more" : "expand_less"}
+        {hasForm && !showSkeleton && (
+          <span className="rounded-md bg-surface-sunken px-2 py-0.5 text-[11px] font-medium text-ink-muted">
+            {formSchema.length} field{formSchema.length === 1 ? "" : "s"}
           </span>
-        </button>
+        )}
       </div>
 
-      <div
-        className={`flex-1 p-6 overflow-y-auto flex flex-col gap-6 min-h-0 ${
-          isCollapsed ? "hidden lg:flex" : "flex"
-        }`}
-      >
-        {isGenerating && formSchema.length === 0 ? (
+      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto p-5">
+        {showSkeleton ? (
           <FormSkeleton />
-        ) : formSchema.length > 0 ? (
-          <>
-            {isGenerating ? (
-              <FormSkeleton />
-            ) : (
-              <>
-                <FormPreview schema={formSchema} />
-                <FormActions
-                  sessionId={sessionId}
-                  formSchema={formSchema}
-                  onNavigate={onNavigate}
-                  onSchemaUpdate={onSchemaUpdate}
-                />
-              </>
-            )}
-          </>
+        ) : hasForm ? (
+          <div className="flex flex-col gap-7">
+            <FormRenderer
+              schema={formSchema}
+              values={initialValues(formSchema)}
+              disabled
+            />
+            <FormActions
+              sessionId={sessionId}
+              formSchema={formSchema}
+              onNavigate={onNavigate}
+              onSchemaUpdate={onSchemaUpdate}
+            />
+          </div>
         ) : (
-          <div className="flex-1 flex flex-col items-center justify-center text-center text-slate-600">
-            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center mb-6 border-2 border-slate-200">
-              <span className="material-symbols-outlined text-2xl text-slate-400">
-                description
-              </span>
+          <div className="flex flex-1 flex-col items-center justify-center text-center">
+            <div className="mb-4 grid size-14 place-items-center rounded-2xl border border-border bg-surface-sunken text-ink-faint">
+              <FileText className="size-6" strokeWidth={1.5} />
             </div>
-            <h3 className="text-lg font-semibold mb-2 text-slate-700">
-              No Form Yet
+            <h3 className="font-display text-lg font-medium text-ink">
+              Your form will appear here
             </h3>
-            <p className="text-sm">Start chatting to generate your form</p>
+            <p className="mt-1 max-w-xs text-sm text-ink-muted">
+              Describe what you need in the chat and watch it take shape.
+            </p>
           </div>
         )}
       </div>

@@ -1,16 +1,20 @@
-import * as React from 'react';
+import * as React from "react";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-// import { getPublicForm, submitFormResponse } from "../../services/api";
+import { motion } from "framer-motion";
+import { FileWarning, Send } from "lucide-react";
 import { useApi } from "../../services/api";
-import LoadingButton from "./ui/LoadingButton";
-
-interface FormField {
-  label: string;
-  type: string;
-  required?: boolean;
-  options?: string[];
-}
+import { Button } from "./ui/button";
+import { CenteredSpinner } from "./ui/spinner";
+import { FormRenderer } from "./form-fields/FormRenderer";
+import { SuccessStamp } from "./form-fields/SuccessStamp";
+import {
+  initialValues,
+  missingRequired,
+  type FormField,
+  type FormValues,
+  type FieldValue,
+} from "./form-fields/types";
 
 interface FormType {
   title: string;
@@ -26,10 +30,12 @@ const FormView = (): React.ReactElement => {
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [formData, setFormData] = useState<Record<string, any>>({});
+  const [formData, setFormData] = useState<FormValues>({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     loadForm();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formId]);
 
   const loadForm = async (): Promise<void> => {
@@ -38,14 +44,9 @@ const FormView = (): React.ReactElement => {
       const response = await getPublicForm(formId || "");
       if (response.success) {
         setForm(response.form);
-        // Initialize form data
-        const initialData: Record<string, any> = {};
-        response.form.schema.forEach((field: FormField) => {
-          initialData[field.label] = field.type === "checkbox" ? false : "";
-        });
-        setFormData(initialData);
+        setFormData(initialValues(response.form.schema));
       } else {
-        setError(response.error || null);
+        setError(response.error || "This form could not be found.");
       }
     } catch (err) {
       setError("Failed to load form");
@@ -55,255 +56,120 @@ const FormView = (): React.ReactElement => {
     }
   };
 
-  const handleInputChange = (fieldLabel: string, value: any): void => {
-    setFormData((prev) => ({
-      ...prev,
-      [fieldLabel]: value,
-    }));
+  const handleInputChange = (label: string, value: FieldValue): void => {
+    setFormData((prev) => ({ ...prev, [label]: value }));
+    setErrors((prev) => {
+      if (!prev[label]) return prev;
+      const next = { ...prev };
+      delete next[label];
+      return next;
+    });
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement>
+  ): Promise<void> => {
     e.preventDefault();
-
-    // Validate required fields
     if (!form) return;
-    const missingFields = form.schema
-      .filter((field) => field.required && !formData[field.label])
-      .map((field) => field.label);
 
-    if (missingFields.length > 0) {
-      alert(`Please fill in required fields: ${missingFields.join(", ")}`);
+    const missing = missingRequired(form.schema, formData);
+    if (missing.length > 0) {
+      const nextErrors: Record<string, string> = {};
+      missing.forEach((label) => (nextErrors[label] = "This field is required."));
+      setErrors(nextErrors);
+      // focus first invalid field
+      const firstIndex = form.schema.findIndex((f) => f.label === missing[0]);
+      document.getElementById(`field-${firstIndex}`)?.focus();
       return;
     }
 
     try {
       setSubmitting(true);
-      if (!form) return;
-      // Convert form data to API format
-      const responses = form.schema.map((field: FormField) => ({
+      const responses = form.schema.map((field) => ({
         label: field.label,
         value: formData[field.label],
       }));
-
       const response = await submitFormResponse(formId || "", responses);
-
-      if (response.success) {
-        setSubmitted(true);
-      } else {
-        throw new Error(response.error);
-      }
+      if (response.success) setSubmitted(true);
+      else throw new Error(response.error);
     } catch (err) {
-      alert("Failed to submit form. Please try again.");
+      setError("Failed to submit form. Please try again.");
       console.error("Error submitting form:", err);
     } finally {
       setSubmitting(false);
     }
   };
 
-  const renderField = (field: FormField, index: number): React.ReactElement => {
-    const fieldId = `field-${index}`;
-    const value = formData[field.label] || "";
+  if (loading) return <CenteredSpinner label="Loading form…" />;
 
-    switch (field.type) {
-      case "text":
-      case "email":
-      case "number":
-        return (
-          <input
-            key={index}
-            id={fieldId}
-            type={field.type}
-            value={value}
-            onChange={(e) => handleInputChange(field.label, e.target.value)}
-            className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl text-sm transition-all duration-200 focus:outline-none       focus:border-violet-500 focus:ring-4 focus:ring-violet-100"
-                  placeholder={`Enter ${field.label.toLowerCase()}`}
-                  required={field.required}
-                />
-              );
-
-            case "date":
-              return (
-                <input
-                  key={index}
-                  id={fieldId}
-                  type="date"
-                  value={value}
-                  onChange={(e) => handleInputChange(field.label, e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl text-sm transition-all duration-200 bg-white focus:outline-none focus:border-violet-500 focus:ring-4 focus:ring-violet-100"
-                  required={field.required}
-                />
-              );
-
-            case "select":
-              return (
-                <select
-                  key={index}
-                  id={fieldId}
-                  value={value}
-                  onChange={(e) => handleInputChange(field.label, e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl text-sm transition-all duration-200 bg-white focus:outline-none focus:border-violet-500 focus:ring-4 focus:ring-violet-100"
-            required={field.required}
-          >
-            <option value="">Choose an option</option>
-            {field.options?.map((option: string, optIndex: number) => (
-              <option key={optIndex} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-        );
-
-      case "checkbox":
-        return (
-          <div key={index} className="flex items-center gap-3 py-2">
-            <input
-              id={fieldId}
-              type="checkbox"
-              checked={value}
-              onChange={(e) => handleInputChange(field.label, e.target.checked)}
-              className="w-5 h-5 accent-violet-600 cursor-pointer"
-            />
-            <label
-              htmlFor={fieldId}
-              className="text-sm       text-slate-700 cursor-pointer select-none font-semibold"
-                  >
-                    {field.label}
-                    {field.required && (
-                      <span className="text-red-500 font-medium ml-1">*</span>
-                    )}
-                  </label>
-                </div>
-              );
-
-            case "file":
-              return (
-                <div key={index} className="relative">
-                  <input
-                    id={fieldId}
-                    type="file"
-                    onChange={(e) => {
-                      const files = e.target.files;
-                      handleInputChange(field.label, files && files[0] ? files[0].name : "");
-                    }}
-                    className="absolute opacity-0 w-full h-full cursor-pointer"
-                    required={field.required}
-                  />
-                  <label
-                    htmlFor={fieldId}
-                    className="flex flex-col items-center justify-center py-8 px-4 border-2 border-dashed border-slate-300 rounded-xl bg-slate-50 cursor-pointer transition-all duration-200 gap-2 hover:border-violet-500 hover:bg-violet-50"
-            >
-              <span className="material-symbols-outlined text-2xl text-slate-400">
-                cloud_upload
-              </span>
-              <span className="text-sm text-slate-600">
-                {value || "Choose file or drag here"}
-              </span>
-            </label>
-          </div>
-        );
-
-      default:
-        return (
-          <textarea
-            key={index}
-            id={fieldId}
-            rows={4}
-            value={value}
-            onChange={(e) => handleInputChange(field.label, e.target.value)}
-            className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl text-sm resize-vertical transition-all duration-200 focus:outline-none   focus:border-violet-500 focus:ring-4 focus:ring-violet-100"
-              placeholder={`Enter ${field.label.toLowerCase()}`}
-              required={field.required}
-            />
-          );
-      }
-    };
-
-    if (loading) {
+  if (error && !form) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen text-center py-8 text-slate-600">
-        <div className="relative w-15 h-15 mb-4">
-          <div className="absolute w-full h-full border-3 border-transparent border-t-violet-600 rounded-full animate-spin"></div>
+      <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 text-center">
+        <div className="grid size-16 place-items-center rounded-full border border-border bg-surface text-ink-muted">
+          <FileWarning className="size-7" strokeWidth={1.5} />
         </div>
-        <p>Loading form...</p>
+        <h2 className="mt-6 font-display text-2xl font-medium tracking-tight text-ink">
+          Form not found
+        </h2>
+        <p className="mt-2 max-w-sm text-ink-muted">{error}</p>
       </div>
     );
   }
 
-  if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen text-center py-8 text-red-600">
-        <div className="w-25 h-25 rounded-full bg-red-50 flex items-center justify-center mb-6 border-2 border-red-200">
-          <span className="material-symbols-outlined text-3xl">error</span>
-        </div>
-        <h2 className="text-2xl font-semibold mb-2">Form Not Found</h2>
-        <p>{error}</p>
-      </div>
-    );
-  }
-
-  if (submitted) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen text-center py-8 text-emerald-600">
-        <div className="w-25 h-25 rounded-full bg-emerald-50 flex items-center justify-center mb-6 border-2 border-emerald-200">
-          <span className="material-symbols-outlined text-3xl">
-            check_circle
-          </span>
-        </div>
-        <h2 className="text-2xl font-semibold mb-2">Thank You!</h2>
-        <p>Your response has been submitted successfully.</p>
-      </div>
-    );
-  }
+  if (submitted) return <SuccessStamp />;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-8 px-4">
-      <div className="max-w-2xl mx-auto bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden">
-        <div className="p-8 bg-gradient-to-r from-white to-slate-50 border-b border-slate-100 text-center">
-          <h1 className="text-3xl font-bold text-slate-800 mb-2">
+    <div className="px-4 py-10 sm:py-14">
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: [0.2, 0, 0, 1] }}
+        className="mx-auto max-w-xl overflow-hidden rounded-2xl border border-border bg-surface shadow-sm"
+      >
+        <div className="border-b border-border px-7 py-7 sm:px-9">
+          <h1 className="font-display text-[1.75rem] font-medium leading-tight tracking-tight text-ink">
             {form?.title}
           </h1>
           {form?.description && (
-            <p className="text-slate-600 text-base leading-relaxed">
+            <p className="mt-2 leading-relaxed text-ink-muted">
               {form.description}
             </p>
           )}
         </div>
 
-        <form onSubmit={handleSubmit} className="p-8 flex flex-col gap-6">
-          {form?.schema.map((field: FormField, index: number) => (
-            <div
-              key={index}
-              className="flex flex-col gap-2 animate-in fade-in duration-300"
-              style={{ animationDelay: `${index * 0.1}s` }}
-            >
-              {field.type !== "checkbox" && (
-                <label
-                  htmlFor={`field-${index}`}
-                  className="text-sm font-semibold text-slate-700 flex items-center gap-1"
-                >
-                  {field.label}
-                  {field.required && (
-                    <span className="text-red-500 font-medium">*</span>
-                  )}
-                </label>
-              )}
-              {renderField(field, index)}
-            </div>
-          ))}
+        <form onSubmit={handleSubmit} className="px-7 py-7 sm:px-9" noValidate>
+          {form && (
+            <FormRenderer
+              schema={form.schema}
+              values={formData}
+              onChange={handleInputChange}
+              errors={errors}
+            />
+          )}
 
-          <div className="pt-4 border-t border-slate-100">
-            <LoadingButton
+          {error && (
+            <p role="alert" className="mt-5 text-[13px] text-danger">
+              {error}
+            </p>
+          )}
+
+          <div className="mt-8 border-t border-border pt-6">
+            <Button
               type="submit"
+              size="lg"
               loading={submitting}
-              className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-violet-600 to-purple-600 text-white border-0 rounded-xl text-base font-semibold cursor-pointer transition-all duration-200 shadow-lg shadow-violet-500/25 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-violet-500/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-              onClick={() => {}}
+              className="w-full"
             >
-              <span className="material-symbols-outlined">send</span>
-              Submit Form
-            </LoadingButton>
+              {!submitting && <Send className="size-4" />}
+              Submit
+            </Button>
           </div>
         </form>
-      </div>
+      </motion.div>
+
+      <p className="mx-auto mt-5 max-w-xl text-center text-xs text-ink-faint">
+        Never submit sensitive information you wouldn’t want shared.
+      </p>
     </div>
   );
 };

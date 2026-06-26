@@ -1,41 +1,26 @@
+import { Skeleton } from "./skeleton";
+
 const FormSkeleton = () => {
   return (
-    <div className="animate-pulse space-y-6">
-      {/* Form Title Skeleton */}
-      <div className="space-y-3">
-        <div className="h-8 bg-gradient-to-r from-slate-200 to-slate-100 rounded-lg w-3/4"></div>
-        <div className="h-4 bg-gradient-to-r from-slate-200 to-slate-100 rounded w-1/2"></div>
+    <div className="flex flex-col gap-7">
+      <div className="flex flex-col gap-2.5">
+        <Skeleton className="h-7 w-2/3" />
+        <Skeleton className="h-4 w-1/2" />
       </div>
 
-      {/* Form Fields Skeleton */}
-      {[1, 2, 3].map((i) => (
-        <div key={i} className="space-y-2">
-          <div className="h-5 bg-gradient-to-r from-slate-200 to-slate-100 rounded w-1/3"></div>
-          <div className="h-12 bg-gradient-to-r from-slate-200 to-slate-100 rounded-xl"></div>
+      {[0, 1, 2].map((i) => (
+        <div key={i} className="flex flex-col gap-2">
+          <Skeleton className="h-4 w-1/3" />
+          <Skeleton className="h-10 w-full" />
         </div>
       ))}
 
-      {/* Button Skeleton */}
-      <div className="flex gap-3 pt-4">
-        <div className="h-12 bg-gradient-to-r from-violet-200 to-purple-200 rounded-xl w-32"></div>
-        <div className="h-12 bg-gradient-to-r from-slate-200 to-slate-100 rounded-xl w-24"></div>
+      <div className="flex gap-3 border-t border-border pt-6">
+        <Skeleton className="h-10 flex-1" />
+        <Skeleton className="h-10 flex-1" />
       </div>
 
-      {/* Loading Text */}
-      <div className="flex items-center justify-center gap-2 pt-4">
-        <div className="flex gap-1">
-          <div className="w-2 h-2 rounded-full bg-violet-400 animate-bounce"></div>
-          <div
-            className="w-2 h-2 rounded-full bg-violet-400 animate-bounce"
-            style={{ animationDelay: "0.1s" }}
-          ></div>
-          <div
-            className="w-2 h-2 rounded-full bg-violet-400 animate-bounce"
-            style={{ animationDelay: "0.2s" }}
-          ></div>
-        </div>
-        <p className="text-sm text-slate-500 font-medium">Generating your form...</p>
-      </div>
+      <p className="text-center text-[13px] text-ink-faint">Composing your form…</p>
     </div>
   );
 };

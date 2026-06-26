@@ -2,9 +2,29 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/jpg" href="/favicon.png" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FormGenie</title>
+    <meta
+      name="description"
+      content="FormGenie — describe a form in plain English and watch it take shape. Publish instantly, collect responses, see everything in one calm dashboard."
+    />
+    <title>FormGenie — Forms, the way they should have always felt</title>
+    <script>
+      // Prevent theme flash: apply the resolved theme before first paint.
+      (function () {
+        try {
+          var stored = localStorage.getItem("formgenie-theme");
+          var dark =
+            stored === "dark" ||
+            (!stored &&
+              window.matchMedia("(prefers-color-scheme: dark)").matches);
+          if (dark) {
+            document.documentElement.classList.add("dark");
+            document.documentElement.style.colorScheme = "dark";
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

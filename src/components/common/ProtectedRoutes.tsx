@@ -1,5 +1,6 @@
 import { SignIn, useUser } from "@clerk/clerk-react";
 import { Outlet, useLocation } from "react-router-dom";
+import { CenteredSpinner } from "@/components/ui/spinner";
 
 type ProtectedRouteProps = {
   children?: React.ReactNode;
@@ -11,30 +12,31 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   if (!isLoaded) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-black/20">
-        <span className="text-white">Loading...</span>
+      <div className="min-h-dvh bg-bg">
+        <CenteredSpinner label="Loading your workspace…" />
       </div>
     );
   }
 
   if (!isSignedIn) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center backdrop-blur-md bg-black/40 z-50">
-        <div className="bg-white rounded-2xl p-6 shadow-xl">
-          <SignIn
-            redirectUrl={location.pathname} // 👈 jis route se aya tha usi pe bhejna
-            appearance={{
-              elements: {
-                card: "shadow-none bg-transparent",
-              },
-            }}
-          />
-        </div>
+      <div className="flex min-h-dvh items-center justify-center bg-bg px-4">
+        <SignIn
+          fallbackRedirectUrl={location.pathname}
+          appearance={{
+            variables: {
+              colorPrimary: "#2b4acb",
+              borderRadius: "10px",
+            },
+            elements: {
+              cardBox: "shadow-lg border border-border rounded-2xl",
+            },
+          }}
+        />
       </div>
     );
   }
 
-  // Agar children diye ho to render karo warna Outlet
   return <>{children || <Outlet />}</>;
 };
 
