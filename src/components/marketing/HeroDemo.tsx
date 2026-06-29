@@ -140,7 +140,7 @@ export function HeroDemo() {
             <Sparkles className="size-3" />
             Describe your form
           </div>
-          <div className="min-h-[40px] rounded-lg border border-border bg-surface px-3 py-2 text-[13px] leading-relaxed text-ink">
+          <div className="min-h-[58px] rounded-lg border border-border bg-surface px-3 py-2 text-[13px] leading-relaxed text-ink">
             {typed}
             {phase === "typing" && (
               <span className="ml-px inline-block h-[15px] w-px translate-y-[2px] animate-pulse bg-accent" />
@@ -148,8 +148,9 @@ export function HeroDemo() {
           </div>
         </div>
 
-        {/* result area */}
-        <div className="relative min-h-[260px] p-5">
+        {/* result area — fixed height (sized to the tallest example) so the
+            card never resizes as it cycles between forms */}
+        <div className="relative min-h-[484px] p-5">
           <AnimatePresence mode="wait">
             {phase === "generating" ? (
               <motion.div
