@@ -16,7 +16,7 @@ export function Showcase() {
         <SectionHeading
           eyebrow="The dashboard"
           title="A calm home for every response."
-          description="See what’s coming in at a glance — without the spreadsheet anxiety."
+          description="See what's coming in at a glance, without the spreadsheet anxiety."
         />
 
         <motion.div

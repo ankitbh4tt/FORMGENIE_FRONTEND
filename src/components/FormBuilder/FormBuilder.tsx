@@ -33,7 +33,7 @@ const FormBuilder = (): React.ReactElement => {
       id: 1,
       type: "assistant",
       content:
-        "Hi — describe the form you'd like to create and I'll compose it for you. You can refine it just by telling me what to change.",
+        "Hi! Describe the form you'd like to create and I'll compose it for you. You can refine it just by telling me what to change.",
       timestamp: new Date(),
     },
   ]);
@@ -116,8 +116,8 @@ const FormBuilder = (): React.ReactElement => {
           id: Date.now() + 1,
           type: "assistant",
           content: currentSessionId
-            ? "Done — I've updated your form. Check the preview to see the changes."
-            : "Here's your form. Take a look in the preview — want to adjust anything?",
+            ? "Done! I've updated your form. Check the preview to see the changes."
+            : "Here's your form. Take a look in the preview. Want to adjust anything?",
           timestamp: new Date(),
         };
         setMessages((prev) => [...prev, assistantMessage]);
@@ -144,7 +144,7 @@ const FormBuilder = (): React.ReactElement => {
           id: Date.now() + 1,
           type: "assistant",
           content:
-            "Sorry — I ran into an issue with that request. Try again with a slightly different description.",
+            "Sorry, I ran into an issue with that request. Try again with a slightly different description.",
           timestamp: new Date(),
           isError: true,
         },

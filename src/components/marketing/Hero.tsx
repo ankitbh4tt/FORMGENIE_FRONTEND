@@ -52,7 +52,7 @@ export function Hero() {
             className="mt-6 max-w-md text-lg leading-relaxed text-ink-muted"
           >
             Describe what you need in a sentence. FormGenie composes a clean,
-            shareable form — and collects every response in one calm place.
+            shareable form, and collects every response in one calm place.
           </motion.p>
 
           <motion.div

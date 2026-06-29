@@ -27,7 +27,7 @@ const EXAMPLES: DemoExample[] = [
     ],
   },
   {
-    prompt: "An event RSVP — name, email, how many guests, and dietary notes.",
+    prompt: "An event RSVP with name, email, how many guests, and dietary notes.",
     title: "You're invited",
     fields: [
       { label: "Your name", kind: "text" },

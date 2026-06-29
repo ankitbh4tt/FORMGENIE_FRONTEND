@@ -85,7 +85,7 @@ export function SidebarNav({ onNavigate, onOpenCommand }: SidebarNavProps) {
 
       <div className="mt-auto px-2.5 pt-4">
         <p className="text-[11px] leading-relaxed text-ink-faint">
-          FormGenie — describe it, publish it, collect it.
+          FormGenie. Describe it, publish it, collect it.
         </p>
       </div>
     </div>

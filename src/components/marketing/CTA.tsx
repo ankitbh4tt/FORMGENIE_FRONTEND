@@ -28,12 +28,12 @@ export function CTA() {
             Your next form is one sentence away.
           </h2>
           <p className="mx-auto mt-4 max-w-md text-lg text-ink-muted">
-            Describe it, publish it, and start collecting — all in the time it
+            Describe it, publish it, and start collecting, all in the time it
             takes to read this.
           </p>
           <div className="mt-8 flex justify-center">
             <Button size="lg" onClick={() => navigate("/dashboard")}>
-              Start building — it's free
+              Start building for free
               <ArrowRight className="size-4" />
             </Button>
           </div>

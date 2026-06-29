@@ -17,7 +17,7 @@ const FEATURES = [
   {
     icon: PencilRuler,
     title: "Edit by conversation",
-    body: "Add a field, make one required, reorder — just say what you want and watch the form update live.",
+    body: "Add a field, make one required, reorder. Just say what you want and watch the form update live.",
   },
   {
     icon: Inbox,
@@ -27,7 +27,7 @@ const FEATURES = [
   {
     icon: Link2,
     title: "Share with one link",
-    body: "Publish instantly to a clean public page. Send it anywhere — it just works.",
+    body: "Publish instantly to a clean public page. Send it anywhere and it just works.",
   },
   {
     icon: Smartphone,

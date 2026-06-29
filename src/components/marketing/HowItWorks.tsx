@@ -6,13 +6,13 @@ const STEPS = [
     icon: PenLine,
     step: "01",
     title: "Describe it",
-    body: "Write what you need in plain English — “a feedback form with a rating and an optional comment.” No builders, no dragging.",
+    body: "Write what you need in plain English, like \"a feedback form with a rating and an optional comment.\" No builders, no dragging.",
   },
   {
     icon: Wand2,
     step: "02",
     title: "Refine it",
-    body: "FormGenie drafts the fields, labels, and types. Tweak anything by simply asking — it adjusts the form as you talk.",
+    body: "FormGenie drafts the fields, labels, and types. Tweak anything by simply asking, and it adjusts the form as you talk.",
   },
   {
     icon: Share2,

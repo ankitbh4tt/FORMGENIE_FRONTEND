@@ -66,7 +66,7 @@ const ChatPanel = ({
             Form assistant
           </h2>
           <p className="text-[13px] text-ink-muted">
-            Describe what you need — refine by chatting
+            Describe what you need, refine by chatting
           </p>
         </div>
         <div className="flex items-center gap-2">

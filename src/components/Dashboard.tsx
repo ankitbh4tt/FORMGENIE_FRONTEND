@@ -142,7 +142,7 @@ const Dashboard = () => {
         <EmptyState
           icon={FileText}
           title="Create your first form"
-          description="Describe what you need in plain English and FormGenie will compose it — then share the link and watch responses arrive here."
+          description="Describe what you need in plain English and FormGenie will compose it, then share the link and watch responses arrive here."
           action={
             <Button onClick={() => navigate("/builder")}>
               <Plus className="size-4" />
@@ -181,7 +181,7 @@ const Dashboard = () => {
                 />
               ) : (
                 <div className="flex h-[220px] items-center justify-center text-sm text-ink-faint">
-                  No activity yet — responses will show up here.
+                  No activity yet. Responses will show up here.
                 </div>
               )}
             </div>

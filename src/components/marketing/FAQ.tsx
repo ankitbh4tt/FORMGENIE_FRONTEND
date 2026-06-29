@@ -11,11 +11,11 @@ const FAQS = [
   },
   {
     q: "What kinds of fields are supported?",
-    a: "Short text, email, numbers, dates, dropdowns, checkboxes, long text, file uploads, multiple choice, and ratings — the building blocks of almost any form.",
+    a: "Short text, email, numbers, dates, dropdowns, checkboxes, long text, file uploads, multiple choice, and ratings. These are the building blocks of almost any form.",
   },
   {
     q: "How do people respond to my form?",
-    a: "Every published form gets a clean public link. Share it anywhere — responses appear in your dashboard the moment they're submitted.",
+    a: "Every published form gets a clean public link. Share it anywhere, and responses appear in your dashboard the moment they're submitted.",
   },
   {
     q: "Is my data private?",
