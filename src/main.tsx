@@ -9,7 +9,6 @@ import { ClerkProvider } from "@clerk/clerk-react";
 import { ThemeProvider } from "./lib/theme";
 import { ToastHost } from "./components/ui/Toast";
 
-// Import your Publishable Key
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
 if (!PUBLISHABLE_KEY) {
@@ -24,5 +23,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <ToastHost />
       </ClerkProvider>
     </ThemeProvider>
+    {/* A very light paper tooth over the whole interface. Fixed and static. */}
+    <div className="paper-tooth" aria-hidden="true" />
   </React.StrictMode>
 );

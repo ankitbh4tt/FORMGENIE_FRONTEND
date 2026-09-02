@@ -7,6 +7,7 @@ export const DropdownMenu = DropdownMenuPrimitive.Root;
 export const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger;
 export const DropdownMenuGroup = DropdownMenuPrimitive.Group;
 
+/** Scales out of its trigger, 180ms in, 120ms out. */
 export function DropdownMenuContent({
   className,
   sideOffset = 6,
@@ -19,8 +20,9 @@ export function DropdownMenuContent({
         sideOffset={sideOffset}
         align={align}
         className={cn(
-          "z-50 min-w-[11rem] overflow-hidden rounded-xl border border-border bg-surface-raised p-1 text-ink shadow-lg",
-          "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+          "z-50 min-w-[11rem] origin-(--radix-dropdown-menu-content-transform-origin) overflow-hidden rounded-panel border border-border bg-surface-raised p-1 text-ink shadow-layer",
+          "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:duration-200",
+          "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=closed]:duration-100",
           className
         )}
         {...props}
@@ -41,10 +43,9 @@ export function DropdownMenuItem({
   return (
     <DropdownMenuPrimitive.Item
       className={cn(
-        "relative flex cursor-pointer select-none items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm outline-none transition-colors data-[highlighted]:bg-surface-sunken data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:text-ink-faint",
+        "relative flex min-h-10 cursor-pointer select-none items-center gap-2.5 rounded-control px-2.5 py-2 text-ui outline-none transition-colors duration-(--dur-fast) data-[highlighted]:bg-surface-sunken data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:text-ink-faint",
         inset && "pl-8",
-        destructive &&
-          "text-danger [&_svg]:text-danger data-[highlighted]:bg-danger-soft",
+        destructive && "text-danger [&_svg]:text-danger data-[highlighted]:bg-danger-soft",
         className
       )}
       {...props}
@@ -62,7 +63,7 @@ export function DropdownMenuCheckboxItem({
     <DropdownMenuPrimitive.CheckboxItem
       checked={checked}
       className={cn(
-        "relative flex cursor-pointer select-none items-center rounded-lg py-2 pl-8 pr-2.5 text-sm outline-none transition-colors data-[highlighted]:bg-surface-sunken",
+        "relative flex min-h-10 cursor-pointer select-none items-center rounded-control py-2 pl-8 pr-2.5 text-ui outline-none transition-colors data-[highlighted]:bg-surface-sunken",
         className
       )}
       {...props}
@@ -77,29 +78,10 @@ export function DropdownMenuCheckboxItem({
   );
 }
 
-export function DropdownMenuLabel({
-  className,
-  ...props
-}: React.ComponentProps<typeof DropdownMenuPrimitive.Label>) {
-  return (
-    <DropdownMenuPrimitive.Label
-      className={cn(
-        "px-2.5 py-1.5 text-xs font-medium text-ink-faint",
-        className
-      )}
-      {...props}
-    />
-  );
+export function DropdownMenuLabel({ className, ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Label>) {
+  return <DropdownMenuPrimitive.Label className={cn("px-2.5 py-1.5 text-label text-ink-faint", className)} {...props} />;
 }
 
-export function DropdownMenuSeparator({
-  className,
-  ...props
-}: React.ComponentProps<typeof DropdownMenuPrimitive.Separator>) {
-  return (
-    <DropdownMenuPrimitive.Separator
-      className={cn("my-1 h-px bg-border", className)}
-      {...props}
-    />
-  );
+export function DropdownMenuSeparator({ className, ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Separator>) {
+  return <DropdownMenuPrimitive.Separator className={cn("my-1 h-px bg-border", className)} {...props} />;
 }

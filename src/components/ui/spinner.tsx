@@ -1,13 +1,8 @@
 import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ComposeLine } from "@/components/motion/ComposeLine";
 
-export function Spinner({
-  className,
-  size = 18,
-}: {
-  className?: string;
-  size?: number;
-}) {
+export function Spinner({ className, size = 18 }: { className?: string; size?: number }) {
   return (
     <Loader2
       className={cn("animate-spin text-ink-muted", className)}
@@ -18,11 +13,11 @@ export function Spinner({
   );
 }
 
-export function CenteredSpinner({ label }: { label?: string }) {
+/** A page-level working state: the compose line with one named beat. */
+export function CenteredSpinner({ label = "Loading" }: { label?: string }) {
   return (
-    <div className="flex min-h-[50vh] flex-col items-center justify-center gap-3 text-ink-muted">
-      <Spinner size={22} className="text-accent" />
-      {label && <p className="text-sm">{label}</p>}
+    <div className="flex min-h-[50vh] items-center justify-center px-6">
+      <ComposeLine active states={[label]} label={label} duration={1800} />
     </div>
   );
 }

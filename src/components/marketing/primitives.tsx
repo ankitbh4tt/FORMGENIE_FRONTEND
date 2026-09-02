@@ -1,75 +1,30 @@
 import * as React from "react";
-import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-const EASE = [0.2, 0, 0, 1] as const;
-
-export function Reveal({
-  children,
-  delay = 0,
-  className,
-}: {
-  children: React.ReactNode;
-  delay?: number;
-  className?: string;
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 14 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.55, ease: EASE, delay }}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  );
-}
-
+/**
+ * The statement at the top of a section: the display face, once per section,
+ * arriving with the wipe. Descriptions are working type. No eyebrows.
+ */
 export function SectionHeading({
-  eyebrow,
-  title,
+  statement,
   description,
-  align = "center",
+  id,
   className,
 }: {
-  eyebrow?: string;
-  title: React.ReactNode;
+  statement: React.ReactNode;
   description?: React.ReactNode;
-  align?: "center" | "left";
+  id?: string;
   className?: string;
 }) {
   return (
-    <div
-      className={cn(
-        "max-w-2xl",
-        align === "center" ? "mx-auto text-center" : "text-left",
-        className
-      )}
-    >
-      {eyebrow && (
-        <Reveal>
-          <p className="mb-3 text-[13px] font-medium uppercase tracking-wider text-accent">
-            {eyebrow}
-          </p>
-        </Reveal>
-      )}
-      <Reveal delay={0.05}>
-        <h2 className="font-display text-3xl font-medium tracking-tight text-ink sm:text-[2.5rem] sm:leading-[1.1]">
-          {title}
-        </h2>
-      </Reveal>
+    <div className={cn("max-w-[34ch]", className)}>
+      <h2 id={id} className="font-display text-statement text-ink">
+        <span className="fg-wipe block">{statement}</span>
+      </h2>
       {description && (
-        <Reveal delay={0.1}>
-          <p
-            className={cn(
-              "mt-4 text-lg leading-relaxed text-ink-muted",
-              align === "center" && "mx-auto"
-            )}
-          >
-            {description}
-          </p>
-        </Reveal>
+        <p className="fg-in mt-4 max-w-[44ch] text-lead text-ink-muted" style={{ "--i": 1 } as React.CSSProperties}>
+          {description}
+        </p>
       )}
     </div>
   );

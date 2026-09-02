@@ -1,33 +1,84 @@
-/* index.css — FormGenie "Editorial Paper" design system */
+/* index.css. FormGenie "Editorial Paper" design system. See DESIGN.md. */
 @import "tailwindcss";
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
 /* ----------------------------------------------------------------------------
-   Design tokens — primitives generated into Tailwind utilities
+   Design tokens generated into Tailwind utilities
 ---------------------------------------------------------------------------- */
 @theme {
   --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-display: "Fraunces Variable", ui-serif, Georgia, "Times New Roman", serif;
-  --font-mono: "Geist Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
 
+  /* Type scale. Fluid, with one job each. */
+  --text-display: clamp(2.5rem, 4.4vw, 3.625rem);
+  --text-display--line-height: 1.02;
+  --text-display--letter-spacing: -0.022em;
+  --text-statement: clamp(1.875rem, 3vw, 2.75rem);
+  --text-statement--line-height: 1.08;
+  --text-statement--letter-spacing: -0.016em;
+  --text-title: clamp(1.5rem, 2.2vw, 2rem);
+  --text-title--line-height: 1.15;
+  --text-title--letter-spacing: -0.014em;
+  --text-h2: clamp(1.25rem, 1.6vw, 1.5rem);
+  --text-h2--line-height: 1.2;
+  --text-h2--letter-spacing: -0.01em;
+  --text-h3: 1.0625rem;
+  --text-h3--line-height: 1.35;
+  --text-h3--letter-spacing: -0.006em;
+  --text-lead: clamp(1.0625rem, 1.05vw, 1.1875rem);
+  --text-lead--line-height: 1.55;
+  --text-ui: 0.9375rem;
+  --text-ui--line-height: 1.5;
+  --text-small: 0.875rem;
+  --text-small--line-height: 1.5;
+  --text-label: 0.75rem;
+  --text-label--line-height: 1.2;
+  --text-label--letter-spacing: 0.08em;
+  --text-micro: 0.6875rem;
+  --text-micro--line-height: 1.2;
+  --text-micro--letter-spacing: 0.1em;
+  --text-figure: clamp(1.75rem, 2.4vw, 2.25rem);
+  --text-figure--line-height: 1;
+  --text-figure--letter-spacing: -0.02em;
+
+  /* Shape. Controls 8, panels 12, the sheet 16. */
   --radius-sm: 6px;
   --radius-md: 8px;
   --radius-lg: 12px;
   --radius-xl: 16px;
   --radius-2xl: 22px;
+  --radius-control: 8px;
+  --radius-panel: 12px;
+  --radius-sheet: 16px;
 
+  /* Elevation belongs to layers and the sheet only. */
   --shadow-xs: 0 1px 2px rgba(20, 18, 14, 0.05);
   --shadow-sm: 0 1px 2px rgba(20, 18, 14, 0.06), 0 1px 1px rgba(20, 18, 14, 0.04);
   --shadow-md: 0 4px 14px rgba(20, 18, 14, 0.07);
   --shadow-lg: 0 10px 30px rgba(20, 18, 14, 0.09);
   --shadow-xl: 0 20px 50px rgba(20, 18, 14, 0.12);
+  --shadow-sheet: 0 1px 2px rgba(20, 18, 14, 0.04), 0 14px 40px -18px rgba(20, 18, 14, 0.22);
+  --shadow-layer: 0 0 0 1px rgba(20, 18, 14, 0.04), 0 24px 60px -24px rgba(20, 18, 14, 0.3);
 
-  --ease-out: cubic-bezier(0.2, 0, 0, 1);
+  /* Motion. Strong curves; the built-in ones are too weak. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-soft: cubic-bezier(0.2, 0.65, 0.25, 1);
+
+  /* Layout */
+  --spacing-gutter: clamp(1.25rem, 4vw, 4rem);
+  --spacing-section: clamp(4.5rem, 8vw, 7.5rem);
+  --spacing-header: 4rem;
+  --container-frame: 80rem;
+  --container-app: 72rem;
+  --container-prose: 44rem;
 }
 
-/* Map semantic CSS variables -> Tailwind color utilities */
+/* Semantic CSS variables -> Tailwind colour utilities */
 @theme inline {
   --color-bg: var(--bg);
   --color-surface: var(--surface);
@@ -59,7 +110,7 @@
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
 
-  /* shadcn/radix compatibility aliases */
+  /* shadcn / radix compatibility aliases */
   --color-background: var(--bg);
   --color-foreground: var(--ink);
   --color-card: var(--surface);
@@ -89,20 +140,20 @@
   --surface-sunken: #f3f0ea;
 
   --ink: #1a1a17;
-  --ink-muted: #6b6760;
-  --ink-faint: #9a958c;
+  --ink-muted: #625e57;
+  --ink-faint: #8f8a80;
 
   --border: #e8e4dc;
-  --border-strong: #d8d3c8;
+  --border-strong: #d3cec3;
 
   --accent: #2b4acb;
   --accent-hover: #233ca8;
-  --accent-soft: #eceefb;
+  --accent-soft: #eaedfb;
   --accent-fg: #ffffff;
 
   --success: #2f6b4f;
   --success-soft: #e6f0ea;
-  --warning: #b5760f;
+  --warning: #9a6408;
   --warning-soft: #f7eedd;
   --danger: #b23b2e;
   --danger-soft: #f7e7e4;
@@ -112,27 +163,35 @@
   --chart-3: #b5760f;
   --chart-4: #8a6fb0;
   --chart-5: #c2613d;
+
+  --dur-fast: 140ms;
+  --dur-base: 240ms;
+  --dur-slow: 420ms;
+  --dur-long: 700ms;
+
+  --tooth-opacity: 0.028;
+  --tooth-blend: multiply;
 }
 
 /* ----------------------------------------------------------------------------
-   Dark theme ("ink on dark paper" — warm charcoal, never pure black)
+   Dark theme ("ink on dark paper"; warm charcoal, never pure black)
 ---------------------------------------------------------------------------- */
 .dark {
   --bg: #17150f;
   --surface: #201e1a;
   --surface-raised: #26241f;
-  --surface-sunken: #1a1916;
+  --surface-sunken: #1c1a15;
 
   --ink: #f5f2ec;
-  --ink-muted: #a39e94;
-  --ink-faint: #767065;
+  --ink-muted: #aaa49a;
+  --ink-faint: #7d776c;
 
-  --border: #2e2b26;
-  --border-strong: #3a362f;
+  --border: #2f2c26;
+  --border-strong: #403c34;
 
   --accent: #7f93f6;
   --accent-hover: #97a7f8;
-  --accent-soft: #232a44;
+  --accent-soft: #242b47;
   --accent-fg: #14141a;
 
   --success: #62a684;
@@ -147,6 +206,9 @@
   --chart-3: #d69a3c;
   --chart-4: #b095d6;
   --chart-5: #d98a66;
+
+  --tooth-opacity: 0.04;
+  --tooth-blend: screen;
 }
 
 /* ----------------------------------------------------------------------------
@@ -162,14 +224,47 @@
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
   }
 
   body {
     background-color: var(--bg);
     color: var(--ink);
     font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.6;
     font-feature-settings: "cv05", "cv11", "ss01";
     letter-spacing: -0.011em;
+    overflow-x: clip;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  button {
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
+  }
+
+  input,
+  textarea,
+  select {
+    font: inherit;
+    color: inherit;
+  }
+
+  ::placeholder {
+    color: var(--ink-faint);
+    opacity: 1;
   }
 
   ::selection {
@@ -177,19 +272,28 @@
     color: var(--ink);
   }
 
-  /* Editorial display font, optical-size tuned for large sizes */
+  /* One focus style, everywhere. Inputs draw their own ring on focus. */
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    outline: none;
+  }
+
+  /* Editorial display face, optical size tuned for statements */
   .font-display {
     font-family: var(--font-display);
     font-optical-sizing: auto;
     font-variation-settings: "opsz" 144, "SOFT" 0, "WONK" 0;
+    font-weight: 500;
     letter-spacing: -0.02em;
   }
 
-  /* Thin, paper-friendly scrollbars */
-  * {
-    scrollbar-width: thin;
-    scrollbar-color: var(--border-strong) transparent;
-  }
   *::-webkit-scrollbar {
     width: 10px;
     height: 10px;
@@ -200,34 +304,435 @@
     border: 3px solid transparent;
     background-clip: content-box;
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
 }
 
 /* ----------------------------------------------------------------------------
-   Motion utilities
+   Components: the shared vocabulary
 ---------------------------------------------------------------------------- */
-@keyframes fg-shimmer {
-  100% {
-    transform: translateX(100%);
+@layer components {
+  /* Page containers */
+  .frame {
+    width: 100%;
+    max-width: var(--container-frame);
+    margin-inline: auto;
+    padding-inline: var(--spacing-gutter);
+  }
+
+  .app-frame {
+    width: 100%;
+    max-width: var(--container-app);
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 3vw, 2.5rem);
+  }
+
+  /* Hairlines instead of boxes */
+  .hairline {
+    border-top: 1px solid var(--border);
+  }
+
+  .hairline-b {
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Small uppercase label. Rationed: at most one per section. */
+  .label {
+    font-family: var(--font-sans);
+    font-size: var(--text-label);
+    line-height: var(--text-label--line-height);
+    letter-spacing: var(--text-label--letter-spacing);
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* The sheet: the one justified box. A form is a sheet of paper. */
+  .sheet {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sheet);
+    box-shadow: var(--shadow-sheet);
+  }
+
+  /* A panel that separates without leaving the page */
+  .panel {
+    background: var(--surface);
+    border-radius: var(--radius-panel);
+    box-shadow: inset 0 0 0 1px var(--border);
+  }
+
+  /* Inline link: an underline that draws in from the left */
+  .link-line {
+    position: relative;
+    display: inline-block;
+  }
+
+  .link-line::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -0.12em;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .link-line:hover::after {
+      transform: scaleX(1);
+    }
+  }
+
+  .link-line[aria-current="page"]::after,
+  .link-line[data-active]::after {
+    transform: scaleX(1);
+  }
+
+  /* A quiet underlined text link */
+  .link-quiet {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+    text-underline-offset: 0.22em;
+    text-decoration-thickness: 1px;
+    transition: text-decoration-color var(--dur-base) ease, color var(--dur-base) ease;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .link-quiet:hover {
+      text-decoration-color: currentColor;
+    }
+  }
+
+  /* --------------------------------------------------------------------------
+     Motion vocabulary. `Reveal` sets [data-visible]; CSS does the work.
+     Stagger with style={{ "--i": n }}.
+  -------------------------------------------------------------------------- */
+
+  /* Content arriving: 10px up, quick enough that nobody waits for it */
+  .fg-in {
+    --i: 0;
+    opacity: 0;
+    transform: translate3d(0, 10px, 0);
+    transition:
+      opacity var(--dur-long) var(--ease-soft),
+      transform var(--dur-long) var(--ease-soft);
+    transition-delay: calc(var(--i) * 55ms);
+  }
+
+  [data-visible] .fg-in,
+  .fg-in[data-visible] {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* The statement: type arriving laterally through a clip. Statements only. */
+  .fg-wipe {
+    --i: 0;
+    clip-path: inset(-0.3em 55% -0.35em -0.12em);
+    opacity: 0;
+    transform: translate3d(-0.14em, 0, 0);
+    transition:
+      clip-path var(--dur-long) var(--ease-soft),
+      opacity var(--dur-slow) var(--ease-soft),
+      transform var(--dur-long) var(--ease-soft);
+    transition-delay: calc(var(--i) * 60ms);
+  }
+
+  [data-visible] .fg-wipe,
+  .fg-wipe[data-visible] {
+    clip-path: inset(-0.3em -0.12em -0.35em -0.12em);
+    opacity: 1;
+    transform: none;
+  }
+
+  /* A rule drawing across */
+  .fg-draw {
+    --i: 0;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 800ms var(--ease-soft);
+    transition-delay: calc(var(--i) * 90ms);
+  }
+
+  [data-visible] .fg-draw,
+  .fg-draw[data-visible] {
+    transform: scaleX(1);
+  }
+
+  /* Fields composing into a form: keyframed, because each field mounts once */
+  @keyframes fg-compose {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 6px, 0);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .fg-compose {
+    --i: 0;
+    animation: fg-compose 380ms var(--ease-out) both;
+    animation-delay: calc(var(--i) * 60ms);
+  }
+
+  /* A field that has just been added or changed by a request carries a mark
+     that fades: the reader sees what changed without reading a diff. */
+  .fg-changed {
+    position: relative;
+  }
+
+  .fg-changed::before {
+    content: "";
+    position: absolute;
+    left: -0.875rem;
+    top: 0.25rem;
+    bottom: 0.25rem;
+    width: 2px;
+    border-radius: 999px;
+    background: var(--accent);
+    animation: fg-changed-fade 2600ms ease-out both;
+  }
+
+  @keyframes fg-changed-fade {
+    0%,
+    55% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fg-in,
+    .fg-wipe,
+    .fg-draw {
+      opacity: 1;
+      transform: none;
+      clip-path: none;
+      transition: none;
+    }
+    .fg-compose {
+      animation: fg-compose-fade 180ms ease both;
+      animation-delay: 0ms;
+    }
+    @keyframes fg-compose-fade {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+  }
+
+  /* --------------------------------------------------------------------------
+     The compose line: one hairline drawn left to right with the accent riding
+     its head and the state named beneath. It replaces every spinner.
+  -------------------------------------------------------------------------- */
+  .compose-track {
+    position: relative;
+    width: 100%;
+    height: 1px;
+    background: var(--border-strong);
+  }
+
+  .compose-fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 100%;
+    height: 1px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--compose-dur, 2400ms) cubic-bezier(0.3, 0.2, 0.15, 1);
+  }
+
+  /* The head spans the track so a percentage translate means the whole distance. */
+  .compose-head {
+    position: absolute;
+    top: -2.5px;
+    left: 0;
+    right: 0;
+    height: 6px;
+    transform: translateX(-100%);
+    transition: transform var(--compose-dur, 2400ms) cubic-bezier(0.3, 0.2, 0.15, 1);
+  }
+
+  .compose-head::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: -3px;
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--accent);
+    box-shadow: 0 0 10px 1px color-mix(in srgb, var(--accent) 55%, transparent);
+  }
+
+  [data-run] .compose-fill {
+    transform: scaleX(var(--compose-to, 0.92));
+  }
+
+  [data-run] .compose-head {
+    transform: translateX(calc(-100% + var(--compose-to, 0.92) * 100%));
+  }
+
+  [data-done] .compose-fill {
+    transform: scaleX(1);
+    transition-duration: 320ms;
+  }
+
+  [data-done] .compose-head {
+    transform: translateX(0);
+    transition-duration: 320ms;
+  }
+
+  .compose-state {
+    display: grid;
+    min-height: 1.5rem;
+  }
+
+  .compose-state > span {
+    grid-area: 1 / 1;
+    opacity: 0;
+    transform: translateY(5px);
+    transition: opacity 240ms ease, transform 320ms var(--ease-soft);
+  }
+
+  .compose-state > span[data-shown] {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .compose-fill,
+    .compose-head {
+      transition-duration: 300ms;
+      transition-timing-function: linear;
+    }
+    .compose-state > span {
+      transform: none;
+      transition: opacity 150ms ease;
+    }
+  }
+
+  /* --------------------------------------------------------------------------
+     Disclosure: the panel animates grid rows, so the browser resolves the height
+  -------------------------------------------------------------------------- */
+  .disclosure-panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows var(--dur-base) var(--ease-soft);
+  }
+
+  .disclosure-panel[data-open] {
+    grid-template-rows: 1fr;
+  }
+
+  .disclosure-panel > div {
+    overflow: hidden;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .disclosure-panel {
+      transition: none;
+    }
+  }
+
+  /* Skeleton shimmer */
+  @keyframes fg-shimmer {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  .fg-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .fg-shimmer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in srgb, var(--surface) 70%, transparent),
+      transparent
+    );
+    animation: fg-shimmer 1.6s infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fg-shimmer::after {
+      animation: none;
+    }
+  }
+
+  /* A very light paper tooth over the whole interface. Fixed and static, so it
+     never repaints; enough that the ground is a material, not a flat fill. */
+  .paper-tooth {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: var(--tooth-opacity);
+    mix-blend-mode: var(--tooth-blend);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.3 0 0 0 0 0.26 0 0 0 0 0.2 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+  }
+
+  /* Screen reader only */
+  .sr-only-focusable:not(:focus-visible) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 }
-.fg-shimmer {
-  position: relative;
-  overflow: hidden;
-}
-.fg-shimmer::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  transform: translateX(-100%);
-  background: linear-gradient(
-    90deg,
-    transparent,
-    color-mix(in srgb, var(--surface) 60%, transparent),
-    transparent
-  );
-  animation: fg-shimmer 1.6s infinite;
+
+/* Hide the native search clear glyph; controls provide their own. */
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
 }
 
+/* Number inputs: no spinners in a form that is read as text */
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Reduced motion: keep opacity and colour, drop movement everywhere else. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -236,5 +741,15 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+  .fg-in,
+  .fg-wipe,
+  .fg-draw,
+  .compose-state > span,
+  .fg-compose,
+  .compose-fill,
+  .compose-head {
+    transition-duration: 180ms !important;
+    animation-duration: 180ms !important;
   }
 }

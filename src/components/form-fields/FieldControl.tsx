@@ -15,31 +15,39 @@ interface FieldControlProps {
   onChange: (value: FieldValue) => void;
   invalid?: boolean;
   disabled?: boolean;
+  /** Shorter long-text boxes, for demonstrations. */
+  dense?: boolean;
   describedBy?: string;
 }
 
-export function FieldControl({
-  field,
-  id,
-  value,
-  onChange,
-  invalid,
-  disabled,
-  describedBy,
-}: FieldControlProps) {
-  const placeholder = `Enter ${field.label.toLowerCase()}`;
-
+/** One control per field type. The label lives above it, in the renderer. */
+export function FieldControl({ field, id, value, onChange, invalid, disabled, dense, describedBy }: FieldControlProps) {
   switch (field.type) {
     case "text":
-    case "email":
     case "number":
       return (
         <Input
           id={id}
           type={field.type}
+          inputMode={field.type === "number" ? "decimal" : undefined}
           value={String(value ?? "")}
           onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder}
+          invalid={invalid}
+          disabled={disabled}
+          aria-describedby={describedBy}
+        />
+      );
+
+    case "email":
+      return (
+        <Input
+          id={id}
+          type="email"
+          inputMode="email"
+          autoComplete="email"
+          placeholder="name@example.com"
+          value={String(value ?? "")}
+          onChange={(e) => onChange(e.target.value)}
           invalid={invalid}
           disabled={disabled}
           aria-describedby={describedBy}
@@ -69,7 +77,7 @@ export function FieldControl({
           disabled={disabled}
           aria-describedby={describedBy}
         >
-          <option value="">Choose an option</option>
+          <option value="">Choose one</option>
           {field.options?.map((opt) => (
             <option key={opt} value={opt}>
               {opt}
@@ -85,18 +93,24 @@ export function FieldControl({
           checked={value === true}
           onChange={(e) => onChange(e.target.checked)}
           disabled={disabled}
-          label={field.label}
+          label={
+            <>
+              {field.label}
+              {field.required && (
+                <span className="ml-1.5 text-ink-faint" aria-hidden="true">
+                  *
+                </span>
+              )}
+            </>
+          }
           aria-describedby={describedBy}
+          aria-invalid={invalid || undefined}
         />
       );
 
     case "radio":
       return (
-        <div
-          role="radiogroup"
-          aria-label={field.label}
-          className="flex flex-col gap-2.5 pt-1"
-        >
+        <div role="radiogroup" aria-label={field.label} aria-invalid={invalid || undefined} className="flex flex-col">
           {field.options?.map((opt) => (
             <Radio
               key={opt}
@@ -111,32 +125,17 @@ export function FieldControl({
         </div>
       );
 
-    case "rating": {
-      const current = Number(value ?? 0);
+    case "rating":
       return (
-        <div className="flex items-center gap-1.5 pt-0.5" role="radiogroup" aria-label={field.label}>
-          {[1, 2, 3, 4, 5].map((star) => (
-            <button
-              key={star}
-              type="button"
-              disabled={disabled}
-              aria-label={`${star} star${star > 1 ? "s" : ""}`}
-              aria-pressed={current >= star}
-              onClick={() => onChange(star)}
-              className="rounded-md p-0.5 text-ink-faint transition-colors hover:text-warning focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-not-allowed"
-            >
-              <Star
-                className={cn(
-                  "size-6 transition-colors",
-                  current >= star && "fill-warning text-warning"
-                )}
-                strokeWidth={1.75}
-              />
-            </button>
-          ))}
-        </div>
+        <RatingControl
+          id={id}
+          value={Number(value ?? 0)}
+          onChange={onChange}
+          disabled={disabled}
+          label={field.label}
+          invalid={invalid}
+        />
       );
-    }
 
     case "file":
       return (
@@ -149,19 +148,18 @@ export function FieldControl({
               const file = e.target.files?.[0];
               onChange(file ? file.name : "");
             }}
-            className="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0 disabled:cursor-not-allowed"
+            className="peer absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0 disabled:cursor-not-allowed"
             aria-describedby={describedBy}
+            aria-invalid={invalid || undefined}
           />
           <div
             className={cn(
-              "flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border-strong bg-surface-sunken/50 px-4 py-7 text-center transition-colors",
+              "flex min-h-24 flex-col items-center justify-center gap-2 rounded-control border border-dashed border-border-strong bg-surface px-4 py-6 text-center transition-colors duration-(--dur-base) peer-hover:border-ink-faint peer-focus-visible:border-ink",
               invalid && "border-danger"
             )}
           >
-            <UploadCloud className="size-5 text-ink-faint" />
-            <span className="text-sm text-ink-muted">
-              {value ? String(value) : "Choose a file or drag it here"}
-            </span>
+            <UploadCloud className="size-5 text-ink-faint" strokeWidth={1.75} aria-hidden="true" />
+            <span className="text-small text-ink-muted">{value ? String(value) : "Choose a file, or drop it here"}</span>
           </div>
         </div>
       );
@@ -172,12 +170,84 @@ export function FieldControl({
           id={id}
           value={String(value ?? "")}
           onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder}
           invalid={invalid}
           disabled={disabled}
-          rows={4}
+          rows={dense ? 3 : 4}
           aria-describedby={describedBy}
         />
       );
   }
+}
+
+/**
+ * Five stars as a radio group: arrow keys move, the chosen count is read out,
+ * and the hover preview is an enhancement rather than the interaction.
+ */
+function RatingControl({
+  id,
+  value,
+  onChange,
+  disabled,
+  label,
+  invalid,
+}: {
+  id: string;
+  value: number;
+  onChange: (v: FieldValue) => void;
+  disabled?: boolean;
+  label: string;
+  invalid?: boolean;
+}) {
+  const [hover, setHover] = React.useState(0);
+  const refs = React.useRef<(HTMLButtonElement | null)[]>([]);
+  const shown = hover || value;
+
+  const onKey = (e: React.KeyboardEvent<HTMLButtonElement>, star: number) => {
+    const forward = e.key === "ArrowRight" || e.key === "ArrowUp";
+    const back = e.key === "ArrowLeft" || e.key === "ArrowDown";
+    if (!forward && !back) return;
+    e.preventDefault();
+    const next = Math.min(5, Math.max(1, star + (forward ? 1 : -1)));
+    onChange(next);
+    refs.current[next - 1]?.focus();
+  };
+
+  return (
+    <div
+      role="radiogroup"
+      aria-label={label}
+      aria-invalid={invalid || undefined}
+      className="flex items-center gap-1"
+      onMouseLeave={() => setHover(0)}
+    >
+      {[1, 2, 3, 4, 5].map((star) => (
+        <button
+          key={star}
+          ref={(el) => {
+            refs.current[star - 1] = el;
+          }}
+          id={star === 1 ? id : undefined}
+          type="button"
+          role="radio"
+          aria-checked={value === star}
+          aria-label={`${star} ${star === 1 ? "star" : "stars"}`}
+          tabIndex={value === star || (!value && star === 1) ? 0 : -1}
+          disabled={disabled}
+          onClick={() => onChange(star)}
+          onKeyDown={(e) => onKey(e, star)}
+          onMouseEnter={() => setHover(star)}
+          className="grid size-10 place-items-center rounded-control text-ink-faint transition-[color,transform] duration-(--dur-fast) active:scale-95 disabled:cursor-not-allowed"
+        >
+          <Star
+            className={cn("size-6 transition-colors duration-(--dur-fast)", shown >= star && "fill-warning text-warning")}
+            strokeWidth={1.75}
+            aria-hidden="true"
+          />
+        </button>
+      ))}
+      <span className="tabular ml-2 min-w-[3ch] text-small text-ink-muted" aria-hidden="true">
+        {value ? `${value} / 5` : ""}
+      </span>
+    </div>
+  );
 }

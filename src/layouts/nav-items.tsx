@@ -11,7 +11,7 @@ export interface NavItem {
 
 export const NAV_ITEMS: NavItem[] = [
   {
-    label: "Dashboard",
+    label: "Overview",
     to: "/dashboard",
     icon: LayoutDashboard,
     match: (p) => p === "/dashboard",
@@ -29,3 +29,5 @@ export const NAV_ITEMS: NavItem[] = [
     match: (p) => p.startsWith("/responses"),
   },
 ];
+
+export const isBuilderPath = (p: string) => p.startsWith("/builder") || p === "/chat";

@@ -1,20 +1,12 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { motion } from "framer-motion";
-import { FileWarning, Send } from "lucide-react";
+import { useParams, Link } from "react-router-dom";
 import { useApi } from "../../services/api";
 import { Button } from "./ui/button";
-import { CenteredSpinner } from "./ui/spinner";
+import FormSkeleton from "./ui/FormSkeleton";
 import { FormRenderer } from "./form-fields/FormRenderer";
 import { SuccessStamp } from "./form-fields/SuccessStamp";
-import {
-  initialValues,
-  missingRequired,
-  type FormField,
-  type FormValues,
-  type FieldValue,
-} from "./form-fields/types";
+import { initialValues, missingRequired, type FormField, type FormValues, type FieldValue } from "./form-fields/types";
 
 interface FormType {
   title: string;
@@ -22,6 +14,11 @@ interface FormType {
   schema: FormField[];
 }
 
+/**
+ * The respondent's page. The form is a sheet on paper: a title in the display
+ * face, the fields, one action. Errors sit beside their fields and the first
+ * one takes focus; the thank-you takes focus too.
+ */
 const FormView = (): React.ReactElement => {
   const { formId } = useParams();
   const { getPublicForm, submitFormResponse } = useApi();
@@ -49,7 +46,7 @@ const FormView = (): React.ReactElement => {
         setError(response.error || "This form could not be found.");
       }
     } catch (err) {
-      setError("Failed to load form");
+      setError("This form could not be loaded.");
       console.error("Error loading form:", err);
     } finally {
       setLoading(false);
@@ -66,25 +63,25 @@ const FormView = (): React.ReactElement => {
     });
   };
 
-  const handleSubmit = async (
-    e: React.FormEvent<HTMLFormElement>
-  ): Promise<void> => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     if (!form) return;
 
     const missing = missingRequired(form.schema, formData);
     if (missing.length > 0) {
       const nextErrors: Record<string, string> = {};
-      missing.forEach((label) => (nextErrors[label] = "This field is required."));
+      missing.forEach((label) => (nextErrors[label] = "Please fill this in."));
       setErrors(nextErrors);
-      // focus first invalid field
       const firstIndex = form.schema.findIndex((f) => f.label === missing[0]);
-      document.getElementById(`field-${firstIndex}`)?.focus();
+      const el = document.getElementById(`field-${firstIndex}`);
+      el?.scrollIntoView({ block: "center", behavior: "smooth" });
+      el?.focus({ preventScroll: true });
       return;
     }
 
     try {
       setSubmitting(true);
+      setError(null);
       const responses = form.schema.map((field) => ({
         label: field.label,
         value: formData[field.label],
@@ -93,82 +90,80 @@ const FormView = (): React.ReactElement => {
       if (response.success) setSubmitted(true);
       else throw new Error(response.error);
     } catch (err) {
-      setError("Failed to submit form. Please try again.");
+      setError("Your response could not be sent. Please try again.");
       console.error("Error submitting form:", err);
     } finally {
       setSubmitting(false);
     }
   };
 
-  if (loading) return <CenteredSpinner label="Loading form…" />;
+  const reset = () => {
+    if (!form) return;
+    setFormData(initialValues(form.schema));
+    setErrors({});
+    setSubmitted(false);
+    window.scrollTo({ top: 0 });
+  };
 
-  if (error && !form) {
+  if (loading) {
     return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 text-center">
-        <div className="grid size-16 place-items-center rounded-full border border-border bg-surface text-ink-muted">
-          <FileWarning className="size-7" strokeWidth={1.5} />
+      <div className="px-4 py-8 sm:py-14">
+        <div className="sheet mx-auto max-w-xl p-7 sm:p-9">
+          <FormSkeleton />
         </div>
-        <h2 className="mt-6 font-display text-2xl font-medium tracking-tight text-ink">
-          Form not found
-        </h2>
-        <p className="mt-2 max-w-sm text-ink-muted">{error}</p>
       </div>
     );
   }
 
-  if (submitted) return <SuccessStamp />;
+  if (error && !form) {
+    return (
+      <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 text-center">
+        <h1 className="font-display text-statement text-ink">This form is not here.</h1>
+        <p className="mt-3 max-w-[40ch] text-lead text-ink-muted">{error}</p>
+        <Button variant="secondary" className="mt-8" asChild>
+          <Link to="/">Go to FormGenie</Link>
+        </Button>
+      </div>
+    );
+  }
+
+  if (submitted) {
+    return (
+      <SuccessStamp title="Thank you." message="Your response has been recorded.">
+        <Button variant="quiet" onClick={reset}>
+          Send another response
+        </Button>
+      </SuccessStamp>
+    );
+  }
 
   return (
-    <div className="px-4 py-10 sm:py-14">
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, ease: [0.2, 0, 0, 1] }}
-        className="mx-auto max-w-xl overflow-hidden rounded-2xl border border-border bg-surface shadow-sm"
-      >
-        <div className="border-b border-border px-7 py-7 sm:px-9">
-          <h1 className="font-display text-[1.75rem] font-medium leading-tight tracking-tight text-ink">
-            {form?.title}
-          </h1>
-          {form?.description && (
-            <p className="mt-2 leading-relaxed text-ink-muted">
-              {form.description}
-            </p>
-          )}
+    <div className="px-4 py-8 sm:py-14">
+      <div className="sheet fg-in mx-auto max-w-xl" data-visible="">
+        <div className="border-b border-border px-6 py-7 sm:px-9 sm:py-9">
+          <h1 className="font-display text-title text-ink">{form?.title}</h1>
+          {form?.description && <p className="mt-3 text-lead text-ink-muted">{form.description}</p>}
         </div>
 
-        <form onSubmit={handleSubmit} className="px-7 py-7 sm:px-9" noValidate>
-          {form && (
-            <FormRenderer
-              schema={form.schema}
-              values={formData}
-              onChange={handleInputChange}
-              errors={errors}
-            />
-          )}
+        <form onSubmit={handleSubmit} className="px-6 py-7 sm:px-9 sm:py-9" noValidate aria-busy={submitting || undefined}>
+          {form && <FormRenderer schema={form.schema} values={formData} onChange={handleInputChange} errors={errors} />}
 
           {error && (
-            <p role="alert" className="mt-5 text-[13px] text-danger">
+            <p role="alert" className="mt-6 text-small text-danger">
               {error}
             </p>
           )}
 
-          <div className="mt-8 border-t border-border pt-6">
-            <Button
-              type="submit"
-              size="lg"
-              loading={submitting}
-              className="w-full"
-            >
-              {!submitting && <Send className="size-4" />}
-              Submit
+          <div className="mt-8 border-t border-border pt-7">
+            <Button type="submit" variant="accent" size="lg" loading={submitting} className="w-full">
+              {submitting ? "Sending" : "Submit"}
             </Button>
           </div>
         </form>
-      </motion.div>
+      </div>
 
-      <p className="mx-auto mt-5 max-w-xl text-center text-xs text-ink-faint">
-        Never submit sensitive information you wouldn’t want shared.
+      <p className="mx-auto mt-5 max-w-xl text-center text-small text-ink-faint">
+        Never send information you would not want shared.
       </p>
     </div>
   );

@@ -1,19 +1,29 @@
-import { motion, useReducedMotion } from "framer-motion";
-import { AlertCircle } from "lucide-react";
+import type { CSSProperties } from "react";
 import { Label } from "@/components/ui/field";
 import { FieldControl } from "./FieldControl";
-import type { FormField, FormValues, FieldValue } from "./types";
+import { cn } from "@/lib/utils";
+import type { FieldChange, FormField, FormValues, FieldValue } from "./types";
 
 interface FormRendererProps {
   schema: FormField[];
   values: FormValues;
   onChange?: (label: string, value: FieldValue) => void;
   errors?: Record<string, string>;
-  /** Non-interactive visual preview (used in the builder). */
+  /** Non-interactive preview. */
   disabled?: boolean;
   idPrefix?: string;
+  /** Fields compose into place as they mount. */
+  animate?: boolean;
+  /** Fields that a request just added or changed, marked for a moment. */
+  highlights?: Record<string, FieldChange>;
+  /** Tighter rhythm for demonstrations. */
+  compact?: boolean;
 }
 
+/**
+ * The one renderer for every form: the builder's preview, the respondent's
+ * page, the homepage demonstrations. Same fields, same spacing, same rules.
+ */
 export function FormRenderer({
   schema,
   values,
@@ -21,23 +31,31 @@ export function FormRenderer({
   errors,
   disabled,
   idPrefix = "field",
+  animate = true,
+  highlights,
+  compact = false,
 }: FormRendererProps) {
-  const reduced = useReducedMotion();
+  // Keys by label, so an unchanged field keeps its node when a request moves
+  // its neighbours. Duplicate labels fall back to their position.
+  const seen = new Map<string, number>();
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className={cn("flex flex-col", compact ? "gap-4" : "gap-6")}>
       {schema.map((field, index) => {
+        const n = seen.get(field.label) ?? 0;
+        seen.set(field.label, n + 1);
+        const key = n === 0 ? field.label : `${field.label}-${n}`;
         const id = `${idPrefix}-${index}`;
         const error = errors?.[field.label];
         const isCheckbox = field.type === "checkbox";
+        const mark = highlights?.[field.label];
 
         return (
-          <motion.div
-            key={`${field.label}-${index}`}
-            initial={reduced ? false : { opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: reduced ? 0 : index * 0.05 }}
-            className="flex flex-col gap-1.5"
+          <div
+            key={key}
+            className={cn("flex flex-col gap-1.5", animate && "fg-compose", mark && "fg-changed")}
+            style={{ "--i": Math.min(index, 10) } as CSSProperties}
+            data-changed={mark}
           >
             {!isCheckbox && (
               <Label htmlFor={id} required={field.required}>
@@ -52,20 +70,16 @@ export function FormRenderer({
               onChange={(v) => onChange?.(field.label, v)}
               invalid={!!error}
               disabled={disabled}
+              dense={compact}
               describedBy={error ? `${id}-error` : undefined}
             />
 
             {error && (
-              <p
-                id={`${id}-error`}
-                role="alert"
-                className="flex items-center gap-1.5 text-[13px] text-danger"
-              >
-                <AlertCircle className="size-3.5 shrink-0" />
+              <p id={`${id}-error`} role="alert" className="text-small text-danger">
                 {error}
               </p>
             )}
-          </motion.div>
+          </div>
         );
       })}
     </div>

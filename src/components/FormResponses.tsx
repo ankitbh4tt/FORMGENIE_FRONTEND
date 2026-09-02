@@ -1,34 +1,16 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  Search,
-  ArrowLeft,
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-  ArrowUp,
-  ArrowDown,
-  ChevronsUpDown,
-  Inbox,
-} from "lucide-react";
-import {
-  useReactTable,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getSortedRowModel,
-  getPaginationRowModel,
-  flexRender,
-  type ColumnDef,
-  type SortingState,
-} from "@tanstack/react-table";
+import { Share2, Inbox, ExternalLink } from "lucide-react";
 import { useApi } from "../../services/api";
 import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { CenteredSpinner } from "./ui/spinner";
+import { PageHeader } from "./ui/page-header";
 import { EmptyState } from "./ui/empty-state";
+import { Skeleton } from "./ui/skeleton";
+import ShareModal from "./ShareModal";
+import { ResponsesTable, type ResponseRow } from "./responses/ResponsesTable";
+import { plural } from "@/lib/format";
 
-interface FormResponse {
+interface ApiResponse {
   responseId: string;
   submitterId?: string;
   responses: Array<{
@@ -43,16 +25,16 @@ interface UserForm {
   title: string;
 }
 
+/** Every answer to one form, in the table. */
 const FormResponses = () => {
   const navigate = useNavigate();
   const { formId } = useParams();
   const { getFormResponses, getUserForms } = useApi();
-  const [responses, setResponses] = useState<FormResponse[]>([]);
+  const [responses, setResponses] = useState<ApiResponse[]>([]);
   const [formTitle, setFormTitle] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [globalFilter, setGlobalFilter] = useState("");
+  const [share, setShare] = useState(false);
 
   useEffect(() => {
     if (formId) loadFormResponses();
@@ -67,229 +49,94 @@ const FormResponses = () => {
         setResponses(response.responses);
         const formsResponse = await getUserForms();
         if (formsResponse.success && formsResponse.forms) {
-          const form = (formsResponse.forms as UserForm[]).find(
-            (f) => f.formId === formId
-          );
+          const form = (formsResponse.forms as UserForm[]).find((f) => f.formId === formId);
           setFormTitle(form?.title || "Form");
         }
       } else {
-        setError(response.error || "Failed to load responses");
+        setError(response.error || "The responses could not be loaded.");
       }
     } catch (err) {
-      setError("Failed to load responses");
+      setError("The responses could not be loaded.");
       console.error("Error loading responses:", err);
     } finally {
       setLoading(false);
     }
   };
 
-  const columns = useMemo<ColumnDef<FormResponse>[]>(() => {
-    if (responses.length === 0) return [];
-
-    const allFieldLabels = new Set<string>();
+  const { rows, fieldLabels } = useMemo(() => {
+    const labels: string[] = [];
+    const seen = new Set<string>();
     responses.forEach((r) =>
-      r.responses.forEach((resp) => allFieldLabels.add(resp.label))
+      r.responses.forEach((f) => {
+        if (!seen.has(f.label)) {
+          seen.add(f.label);
+          labels.push(f.label);
+        }
+      })
     );
-
-    const baseColumns: ColumnDef<FormResponse>[] = [
-      {
-        accessorKey: "createdAt",
-        header: "Submitted",
-        cell: ({ getValue }) => (
-          <span className="whitespace-nowrap text-ink-muted">
-            {new Date(getValue() as string).toLocaleString()}
-          </span>
-        ),
-      },
-      {
-        accessorKey: "submitterId",
-        header: "Submitter",
-        cell: ({ getValue }) => (
-          <span className="font-mono text-xs text-ink-faint">
-            {(getValue() as string) || "Anonymous"}
-          </span>
-        ),
-      },
-    ];
-
-    const fieldColumns: ColumnDef<FormResponse>[] = Array.from(
-      allFieldLabels
-    ).map((label) => ({
-      id: label,
-      accessorFn: (row) => {
-        const fr = row.responses.find((r) => r.label === label);
-        return Array.isArray(fr?.value) ? fr?.value.join(", ") : fr?.value;
-      },
-      header: label,
-      cell: ({ getValue }) => {
-        const value = getValue();
-        const display =
-          typeof value === "boolean" ? (value ? "Yes" : "No") : String(value ?? "—");
-        return (
-          <span className="block max-w-[16rem] truncate text-ink" title={display}>
-            {display || "—"}
-          </span>
-        );
-      },
+    const mapped: ResponseRow[] = responses.map((r) => ({
+      id: r.responseId,
+      createdAt: r.createdAt,
+      submitterId: r.submitterId,
+      values: Object.fromEntries(r.responses.map((f) => [f.label, f.value])),
     }));
-
-    return [...baseColumns, ...fieldColumns];
+    return { rows: mapped, fieldLabels: labels };
   }, [responses]);
 
-  const table = useReactTable({
-    data: responses,
-    columns,
-    state: { sorting, globalFilter },
-    onSortingChange: setSorting,
-    onGlobalFilterChange: setGlobalFilter,
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    initialState: { pagination: { pageSize: 20 } },
-  });
-
-  if (loading) return <CenteredSpinner label="Loading responses…" />;
-
   return (
-    <div className="mx-auto max-w-6xl px-5 py-8 sm:px-8">
-      <button
-        onClick={() => navigate("/responses")}
-        className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-ink-muted transition-colors hover:text-ink"
-      >
-        <ArrowLeft className="size-4" />
-        All forms
-      </button>
-
-      <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="font-display text-3xl font-medium tracking-tight text-ink">
-            {formTitle}
-          </h1>
-          <p className="mt-1 text-ink-muted">
-            {responses.length} response{responses.length === 1 ? "" : "s"}
-          </p>
-        </div>
-        <Button variant="secondary" onClick={() => navigate(`/form/${formId}`)}>
-          View public form
-        </Button>
-      </div>
+    <div className="app-frame py-8 md:py-10">
+      <PageHeader
+        back={{ to: "/responses", label: "All forms" }}
+        title={loading ? "Responses" : formTitle}
+        description={loading ? undefined : plural(responses.length, "response")}
+        actions={
+          <>
+            <Button variant="secondary" onClick={() => setShare(true)}>
+              <Share2 className="size-4" aria-hidden="true" />
+              Share
+            </Button>
+            <Button variant="ghost" onClick={() => navigate(`/form/${formId}`)}>
+              View public form
+              <ExternalLink className="size-4" aria-hidden="true" />
+            </Button>
+          </>
+        }
+      />
 
       {error && (
-        <div className="mb-6 rounded-xl border border-danger/30 bg-danger-soft px-4 py-3 text-sm text-danger">
+        <p role="alert" className="mt-6 text-ui text-danger">
           {error}
-        </div>
+        </p>
       )}
 
-      {responses.length === 0 ? (
+      {loading ? (
+        <div className="mt-8 flex flex-col gap-3" aria-hidden="true">
+          <Skeleton className="h-9 w-72 max-w-full" />
+          <Skeleton className="mt-2 h-10 w-full" />
+          {[0, 1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-11 w-full" />
+          ))}
+        </div>
+      ) : responses.length === 0 ? (
         <EmptyState
+          className="mt-8"
           icon={Inbox}
-          title="No responses yet"
-          description="Once people start filling out this form, their answers will appear here."
+          title="No responses yet."
+          description="Share the link and the answers appear here the moment they are submitted."
           action={
-            <Button onClick={() => navigate(`/form/${formId}`)}>
-              View the form
+            <Button variant="accent" onClick={() => setShare(true)}>
+              <Share2 className="size-4" aria-hidden="true" />
+              Share the form
             </Button>
           }
         />
       ) : (
-        <div className="overflow-hidden rounded-xl border border-border bg-surface shadow-xs">
-          {/* controls */}
-          <div className="flex flex-col gap-3 border-b border-border p-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="relative max-w-xs flex-1">
-              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-faint" />
-              <Input
-                placeholder="Search responses…"
-                value={globalFilter}
-                onChange={(e) => setGlobalFilter(e.target.value)}
-                className="pl-9"
-              />
-            </div>
-            <span className="text-[13px] text-ink-muted">
-              {table.getFilteredRowModel().rows.length} of {responses.length}
-            </span>
-          </div>
-
-          {/* table */}
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse text-sm">
-              <thead>
-                {table.getHeaderGroups().map((hg) => (
-                  <tr key={hg.id} className="border-b border-border bg-surface-sunken/50">
-                    {hg.headers.map((header) => (
-                      <th
-                        key={header.id}
-                        className="whitespace-nowrap px-4 py-3 text-left text-[13px] font-medium text-ink-muted"
-                      >
-                        <button
-                          className="inline-flex items-center gap-1.5 hover:text-ink"
-                          onClick={header.column.getToggleSortingHandler()}
-                        >
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                          {header.column.getIsSorted() === "asc" ? (
-                            <ArrowUp className="size-3.5" />
-                          ) : header.column.getIsSorted() === "desc" ? (
-                            <ArrowDown className="size-3.5" />
-                          ) : (
-                            <ChevronsUpDown className="size-3.5 text-ink-faint" />
-                          )}
-                        </button>
-                      </th>
-                    ))}
-                  </tr>
-                ))}
-              </thead>
-              <tbody>
-                {table.getRowModel().rows.map((row) => (
-                  <tr
-                    key={row.id}
-                    className="border-b border-border last:border-0 transition-colors hover:bg-surface-sunken/40"
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <td key={cell.id} className="px-4 py-3 align-top">
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* pagination */}
-          {table.getPageCount() > 1 && (
-            <div className="flex items-center justify-between border-t border-border p-4">
-              <span className="text-[13px] text-ink-muted">
-                Page {table.getState().pagination.pageIndex + 1} of{" "}
-                {table.getPageCount()}
-              </span>
-              <div className="flex items-center gap-1">
-                {[
-                  { icon: ChevronsLeft, fn: () => table.setPageIndex(0), can: table.getCanPreviousPage() },
-                  { icon: ChevronLeft, fn: () => table.previousPage(), can: table.getCanPreviousPage() },
-                  { icon: ChevronRight, fn: () => table.nextPage(), can: table.getCanNextPage() },
-                  { icon: ChevronsRight, fn: () => table.setPageIndex(table.getPageCount() - 1), can: table.getCanNextPage() },
-                ].map(({ icon: Icon, fn, can }, i) => (
-                  <button
-                    key={i}
-                    onClick={fn}
-                    disabled={!can}
-                    className="grid size-8 place-items-center rounded-lg border border-border text-ink-muted transition-colors enabled:hover:bg-surface-sunken enabled:hover:text-ink disabled:opacity-40"
-                  >
-                    <Icon className="size-4" />
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
+        <div className="mt-8">
+          <ResponsesTable rows={rows} fieldLabels={fieldLabels} caption={`Responses to ${formTitle}`} />
         </div>
       )}
+
+      <ShareModal isOpen={share} onClose={() => setShare(false)} formId={formId ?? ""} formTitle={formTitle} />
     </div>
   );
 };

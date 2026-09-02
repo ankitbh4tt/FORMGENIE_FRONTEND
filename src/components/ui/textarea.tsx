@@ -12,7 +12,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
       ref={ref}
       data-slot="textarea"
       aria-invalid={invalid || undefined}
-      className={cn(inputBaseClass, "min-h-[88px] py-2.5 resize-y", className)}
+      className={cn(inputBaseClass, "min-h-[6rem] resize-y py-2.5 leading-relaxed", className)}
       {...props}
     />
   )

@@ -4,38 +4,37 @@ import { useUser } from "@clerk/clerk-react";
 import { LandingHeader } from "../components/marketing/LandingHeader";
 import { Hero } from "../components/marketing/Hero";
 import { HowItWorks } from "../components/marketing/HowItWorks";
-import { Showcase } from "../components/marketing/Showcase";
-import { Features } from "../components/marketing/Features";
-import { Testimonials } from "../components/marketing/Testimonials";
+import { RefineDemo } from "../components/marketing/RefineDemo";
+import { ResponsesShowcase } from "../components/marketing/ResponsesShowcase";
+import { FieldTypes } from "../components/marketing/FieldTypes";
 import { FAQ } from "../components/marketing/FAQ";
-import { CTA } from "../components/marketing/CTA";
+import { Closing } from "../components/marketing/Closing";
 import { Footer } from "../components/marketing/Footer";
-import { LoadingScreen2 } from "@/components/atoms/LoadingScreen";
 
+/**
+ * The landing page renders at once; nobody waits on a spinner to see what the
+ * product is. A signed-in visitor is taken to their workspace as soon as that
+ * is known.
+ */
 export const LandingPage: React.FC = () => {
   const navigate = useNavigate();
   const { isSignedIn, isLoaded } = useUser();
 
   useEffect(() => {
-    if (isSignedIn && isLoaded) {
-      navigate("/dashboard");
-    }
+    if (isLoaded && isSignedIn) navigate("/dashboard", { replace: true });
   }, [isSignedIn, isLoaded, navigate]);
-
-  if (!isLoaded) return <LoadingScreen2 />;
-  if (isSignedIn) return null;
 
   return (
     <div className="bg-bg text-ink">
       <LandingHeader />
-      <main>
+      <main id="main">
         <Hero />
         <HowItWorks />
-        <Showcase />
-        <Features />
-        <Testimonials />
+        <RefineDemo />
+        <ResponsesShowcase />
+        <FieldTypes />
         <FAQ />
-        <CTA />
+        <Closing />
       </main>
       <Footer />
     </div>
